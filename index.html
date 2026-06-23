@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#17091d">
+  <meta name="description" content="Un pequeño Tamagotchi romántico para cuidar al reporterito.">
+  <title>Tamagotchi del Reporterito</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-mood="tranquilo">
+  <div class="sky-effects" id="skyEffects" aria-hidden="true"></div>
+
+  <main class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">DEPARTAMENTO DE AMOR · UNIDAD 01</p>
+      <h1>Tamagotchi del<br><span>Reporterito</span></h1>
+      <p>Bienvenida, Directiva. El reporterito necesita amor para sobrevivir el día.</p>
+    </header>
+
+    <nav class="world-nav" aria-label="Navegación del Mundo del Reporterito">
+      <button data-world-target="roomScene">🏠 <span>Cuarto</span></button>
+      <button data-world-action="chat">📱 <span>Chat</span></button>
+      <button data-world-target="giftCollection">🎁 <span>Regalos</span></button>
+      <button data-world-target="loveTreePanel">🌳 <span>Árbol</span></button>
+      <button data-world-target="panchitoPanel">🐶 <span>Panchito</span></button>
+      <button data-world-target="achievementSection">🏆 <span>Logros</span></button>
+      <button data-world-target="memoryAlbumTitle">📖 <span>Recuerdos</span></button>
+      <button data-world-target="reporterDiaryTitle">📝 <span>Diario</span></button>
+    </nav>
+
+    <section class="console" aria-label="Consola del reporterito">
+      <div class="console-top">
+        <span class="brand">RPT-LOVE</span>
+        <span class="speaker" aria-hidden="true">••••••</span>
+        <span class="power"><i></i> ONLINE</span>
+      </div>
+
+      <div class="screen-frame">
+        <div class="screen" id="screen">
+          <div class="weather-layer" id="weatherLayer" aria-hidden="true"></div>
+          <div class="screen-hud">
+            <span id="clock">--:--</span>
+            <span id="dayCounter">DÍA 1</span>
+            <span>♥ <b id="loveLevel">63</b>%</span>
+          </div>
+
+          <div class="room-scene" id="roomScene" data-time="morning">
+            <div class="room-light" aria-hidden="true"></div>
+            <div class="room-window" data-room-object="window" aria-label="Ventana del cuarto">
+              <span class="window-moon">☾</span><span class="window-sun">☀</span>
+              <i class="window-star s1">✦</i><i class="window-star s2">·</i><i class="window-star s3">✦</i>
+              <b></b>
+            </div>
+            <button class="room-photo" data-room-object="photo" aria-label="Foto de la Directiva"><i>♥</i><span>DIRECTIVA</span></button>
+            <div class="room-bed" data-room-object="bed" aria-label="Cama"><i></i><b></b><span></span></div>
+            <div class="room-desk" data-room-object="desk" aria-label="Escritorio"><i></i><b></b><span class="desk-lamp">●</span></div>
+            <div class="room-plant" data-room-object="plant" aria-label="Planta"><i></i><b></b><span></span></div>
+            <button class="room-phone" data-room-object="phone" aria-label="Celular"><i></i><span>♥</span></button>
+            <button class="room-mini-tree" data-world-target="loveTreePanel" aria-label="Ir al Árbol de Amor"><i></i><b></b><span>♥</span></button>
+            <div class="room-gifts" id="roomGifts" aria-label="Regalos visibles"></div>
+
+            <div class="status-chip" id="statusChip">TRANQUILO</div>
+            <button class="pet" id="pet" aria-label="Reporterito pixelado. Tócalo para consentirlo.">
+              <span class="pet-shadow"></span>
+              <span class="pixel-hair"></span>
+              <span class="pixel-ear left"></span><span class="pixel-ear right"></span>
+              <span class="pixel-face"><i class="eye left"></i><i class="eye right"></i><i class="mouth"></i></span>
+              <span class="pixel-body"><i class="tie"></i></span>
+              <span class="pixel-arm left"></span><span class="pixel-arm right"></span>
+              <span class="pixel-leg left"></span><span class="pixel-leg right"></span>
+              <span class="press-card">PRENSA</span>
+              <span class="pet-zzz">Zzz</span>
+              <span class="pet-thought">♥</span>
+            </button>
+
+            <button class="panchito" id="panchito" aria-label="Panchito, el perrito del reporterito">
+              <span class="dog-tail"></span><span class="dog-body"><i class="dog-spot"></i></span>
+              <span class="dog-head"><i class="dog-ear left"></i><i class="dog-ear right"></i><b class="dog-eye left"></b><b class="dog-eye right"></b><em></em></span>
+              <span class="dog-leg left"></span><span class="dog-leg right"></span><span class="dog-heart">♥</span>
+            </button>
+            <div class="room-time-card"><span id="roomPeriodIcon">☀</span><b id="roomPeriodName">MAÑANA</b></div>
+            <div class="room-theme-switch" aria-label="Decoración del cuarto"><button data-room-theme="romantic" aria-label="Tema romántico">♥</button><button data-room-theme="cozy" aria-label="Tema cálido">☀</button><button data-room-theme="berry" aria-label="Tema morado">✦</button></div>
+          </div>
+
+          <div class="dialogue" aria-live="polite">
+            <span class="dialogue-caret">▶</span>
+            <p id="moodMessage">Todo tranquilo en el departamento de amor.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-panel" id="statusPanel" aria-label="Barras de estado"></div>
+
+      <section class="panchito-panel" id="panchitoPanel" aria-labelledby="panchitoTitle">
+        <div>
+          <p class="eyebrow">COMPAÑERO DE APOYO EMOCIONAL</p>
+          <h2 id="panchitoTitle">Panchito</h2>
+          <p id="panchitoMessage">Panchito mueve la colita y vigila que el reporterito esté bien.</p>
+        </div>
+        <div class="panchito-stats">
+          <span>CARICIAS <b id="panchitoPets">0</b></span>
+          <span>COMIDAS <b id="panchitoFeeds">0</b></span>
+          <span>JUEGOS <b id="panchitoPlays">0</b></span>
+        </div>
+        <div class="panchito-actions">
+          <button data-panchito-action="pet">🐾 Acariciar</button>
+          <button data-panchito-action="feed">🍖 Darle comida</button>
+          <button data-panchito-action="play">🎾 Jugar</button>
+        </div>
+      </section>
+
+      <section class="love-tree-panel" id="loveTreePanel" aria-labelledby="loveTreeTitle">
+        <header class="tree-panel-header">
+          <div>
+            <p class="eyebrow">RECUERDO VIVO · ARCHIVO BOTÁNICO</p>
+            <h2 id="loveTreeTitle">Árbol de Amor</h2>
+          </div>
+          <span class="tree-level-badge">NIVEL <b id="loveTreeLevel">1</b></span>
+        </header>
+
+        <div class="tree-panel-grid">
+          <div class="tree-scene" id="loveTreeVisual" data-tree-level="1" aria-label="Semillita del Árbol de Amor">
+            <div class="tree-sky-stars" aria-hidden="true"><i>✦</i><i>·</i><i>✦</i><i>·</i></div>
+            <div class="tree-aura" aria-hidden="true"></div>
+            <div class="tree-art" aria-hidden="true">
+              <span class="tree-seed"></span>
+              <div class="tree-sprout"><i></i><b></b></div>
+              <div class="tree-trunk"><i class="branch branch-left"></i><i class="branch branch-right"></i></div>
+              <div class="tree-canopy">
+                <i class="leaf l1"></i><i class="leaf l2"></i><i class="leaf l3"></i><i class="leaf l4"></i>
+                <i class="leaf l5"></i><i class="leaf l6"></i><i class="leaf l7"></i><i class="leaf l8"></i>
+              </div>
+              <div class="tree-hearts"><i>♥</i><i>♥</i><i>♥</i><i>♥</i><i>♥</i></div>
+              <div class="tree-sparkles"><i>✦</i><i>✧</i><i>✦</i><i>✧</i><i>✦</i></div>
+            </div>
+            <div class="tree-ground"></div>
+          </div>
+
+          <div class="tree-info">
+            <p class="tree-stage-label">ETAPA ACTUAL</p>
+            <h3 id="loveTreeStage">Semillita</h3>
+            <p class="tree-message" id="loveTreeMessage">El reporterito plantó una semillita con el primer poquito de cariño.</p>
+            <div class="tree-xp-label"><span>Experiencia del árbol</span><strong id="loveTreeXPText">0 / 50 XP</strong></div>
+            <div class="tree-xp-track" role="progressbar" aria-label="Experiencia del Árbol de Amor" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0">
+              <div class="tree-xp-fill" id="loveTreeXPFill"></div>
+            </div>
+            <div class="tree-memory-list" id="treeMemories" aria-label="Recuerdos del árbol"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="actions" aria-label="Acciones de cuidado">
+        <button data-action="hug"><span>🫂</span>Darle abrazo</button>
+        <button data-action="message"><span>💬</span>Mandarle mensaje</button>
+        <button data-action="love"><span>💘</span>Decirle te amo</button>
+        <button data-action="piojito"><span>✨</span>Dar piojito</button>
+        <button data-action="visit"><span>🚪</span>Visita de la directiva</button>
+        <button data-action="burger"><span>🍔</span>Mandar hamburguesa</button>
+        <button data-action="reward" id="rewardButton" class="reward-button hidden"><span>🎁</span>Abrir recompensa</button>
+      </div>
+
+      <div class="console-footer">
+        <span>HECHO CON ♥ PARA LA DIRECTIVA</span>
+        <button id="helpButton" class="tiny-button">?</button>
+      </div>
+    </section>
+
+    <section class="gift-collection" id="giftCollection" aria-labelledby="giftCollectionTitle">
+      <header class="gift-header">
+        <div><p class="eyebrow">OBJETOS QUE SE QUEDAN PARA SIEMPRE</p><h2 id="giftCollectionTitle">Colección de regalos</h2></div>
+        <span><b id="giftCount">0</b> / 10 encontrados</span>
+      </header>
+      <p class="gift-intro">Cada regalo obtenido aparece físicamente en el cuarto. Tócalo ahí o usa “Mover” para cambiarlo de lugar.</p>
+      <div class="gift-grid" id="giftGrid"></div>
+    </section>
+
+    <section class="memory-album-section" aria-labelledby="memoryAlbumTitle">
+      <header class="album-header">
+        <div>
+          <p class="eyebrow">ARCHIVO DE MOMENTOS IMPORTANTES</p>
+          <h2 id="memoryAlbumTitle">Álbum de recuerdos</h2>
+          <p>El reporterito guarda aquí las cosas bonitas que le ayudan a sobrevivir.</p>
+        </div>
+        <div class="album-counters">
+          <span><small>RECUERDOS</small><b id="memoryCount">0</b></span>
+          <span><small>DÍA</small><b id="albumDayCount">1</b></span>
+          <span><small>RACHA</small><b id="albumStreak">1</b></span>
+        </div>
+      </header>
+      <div class="memory-album-grid" id="memoryAlbum"></div>
+    </section>
+
+
+
+    <section class="reporter-diary-section" id="reporterDiary" aria-labelledby="reporterDiaryTitle">
+      <header class="diary-header">
+        <div>
+          <p class="eyebrow">BITÁCORA PRIVADA DEL REPORTERITO</p>
+          <h2 id="reporterDiaryTitle">Diario del Reporterito</h2>
+          <p>Aquí el reporterito guarda lo que hizo la Directiva, decisiones importantes, pensamientos y momentos que no quiere olvidar.</p>
+        </div>
+        <div class="diary-actions">
+          <span><small>ENTRADAS</small><b id="diaryCount">0</b></span>
+          <button id="diaryThoughtButton" type="button">💭 Nuevo pensamiento</button>
+        </div>
+      </header>
+      <div class="diary-highlight" id="diaryHighlight">El diario está esperando su primer pensamiento bonito.</div>
+      <div class="diary-list" id="diaryList"></div>
+    </section>
+
+    <section class="achievements-section" id="achievementSection">
+      <div>
+        <p class="eyebrow">ARCHIVO CONFIDENCIAL</p>
+        <h2>Logros de la directiva</h2>
+      </div>
+      <div class="achievement-grid" id="achievementGrid"></div>
+    </section>
+
+    <footer>El amor se guarda automáticamente en esta consola · v1.0</footer>
+  </main>
+
+  <div class="modal-backdrop hidden" id="eventModal" role="dialog" aria-modal="true" aria-labelledby="eventTitle">
+    <article class="modal-card event-card">
+      <span class="modal-icon" id="eventIcon">!</span>
+      <p class="eyebrow">EVENTO INESPERADO</p>
+      <h2 id="eventTitle">Atención</h2>
+      <p id="eventText"></p>
+      <div class="modal-actions" id="eventActions"></div>
+    </article>
+  </div>
+
+  <div class="modal-backdrop hidden" id="letterModal" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
+    <article class="modal-card letter-card">
+      <button class="close-modal" data-close="letterModal" aria-label="Cerrar">×</button>
+      <div class="letter-stamp">♥</div>
+      <p class="eyebrow">DOCUMENTO ULTRASECRETO</p>
+      <h2 id="letterTitle">Para mi reporterito</h2>
+      <p id="letterText"></p>
+      <p class="signature">— Sistema Tamagotchi</p>
+    </article>
+  </div>
+
+  <div class="modal-backdrop hidden" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <article class="modal-card manual-card">
+      <button class="close-modal" data-close="helpModal" aria-label="Cerrar">×</button>
+      <p class="eyebrow">MANUAL DE EMERGENCIA</p>
+      <h2 id="helpTitle">Cómo cuidar al reporterito</h2>
+      <p>Sus barras bajan con el tiempo. Dale amor, mensajes, comida y piojito para que sobreviva el día. Los eventos aparecen solos y el progreso queda guardado.</p>
+      <p class="tiny-hint">Dato clasificado: tocar varias veces al reporterito puede ponerlo nervioso…</p>
+    </article>
+  </div>
+
+  <div class="modal-backdrop chat-backdrop hidden" id="chatModal" role="dialog" aria-modal="true" aria-labelledby="chatTitle">
+    <article class="chat-window">
+      <header class="chat-header">
+        <div class="chat-avatar" aria-hidden="true">R</div>
+        <div>
+          <h2 id="chatTitle">Chat con la Directiva</h2>
+          <span><i></i> Reporterito en línea</span>
+        </div>
+        <button class="chat-close" data-close="chatModal" aria-label="Cerrar chat">×</button>
+      </header>
+
+      <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+
+      <section class="chat-composer" id="chatComposer">
+        <div class="chat-category-tabs" id="chatCategories" aria-label="Categorías de mensajes"></div>
+        <p class="chat-prompt">Elige un mensaje para el reporterito:</p>
+        <div class="chat-options" id="chatOptions"></div>
+      </section>
+
+      <section class="special-replies hidden" id="specialReplies">
+        <p>Elige una respuesta de la Directiva:</p>
+        <div id="specialReplyOptions"></div>
+      </section>
+
+      <footer class="chat-footer">
+        <span id="chatCounter">0 mensajes enviados</span>
+        <div><button id="novelButton" class="novel-open">▣ Escena</button><button id="anotherMessageButton" class="another-message hidden">＋ Otra frase</button></div>
+      </footer>
+    </article>
+  </div>
+
+  <div class="modal-backdrop novel-backdrop hidden" id="novelModal" role="dialog" aria-modal="true" aria-labelledby="novelTitle">
+    <article class="novel-window">
+      <header><div><p class="eyebrow">ESCENA ROMÁNTICA · <span id="novelProgress">01/20</span></p><h2 id="novelTitle">Conversación en el cuarto</h2></div><button data-close="novelModal" aria-label="Cerrar escena">×</button></header>
+      <div class="novel-stage">
+        <div class="novel-character directiva-silhouette"><span>♥</span></div>
+        <div class="novel-character reporter-silhouette"><span>R</span></div>
+        <div class="novel-dialogue">
+          <b id="novelSpeaker">DIRECTIVA</b>
+          <p id="novelText"></p>
+        </div>
+      </div>
+      <div class="novel-options" id="novelOptions"></div>
+      <footer><span>Escenas completadas: <b id="novelCompletedCount">0</b></span><button id="nextNovelButton" class="hidden">Siguiente escena →</button></footer>
+    </article>
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+  <div class="heart-burst" id="heartBurst" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
