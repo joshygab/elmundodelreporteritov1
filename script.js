@@ -359,6 +359,22 @@ let novelResolved = false;
 
 const average = () => Object.values(state.stats).reduce((a, b) => a + b, 0) / 5;
 
+function calculateOfflineLoss(lastSaved, now) {
+  const totals = { hugs: 0, affection: 0, messages: 0, energy: 0, trust: 0, attention: 0 };
+  const awakeLoss = { messages: 10, hugs: 8, attention: 8, affection: 7, energy: 7, trust: 5 };
+  const sleepLoss = { messages: 6, hugs: 6, attention: 6, affection: 6, energy: 6, trust: 6 };
+  const maxLoss = 55;
+  const totalHours = Math.floor((now - lastSaved) / 3600000);
+  for (let i = 1; i <= totalHours; i++) {
+    const hour = new Date(lastSaved + i * 3600000).getHours();
+    const sleeping = hour >= 0 && hour < 8;
+    const table = sleeping ? sleepLoss : awakeLoss;
+    Object.keys(totals).forEach(key => totals[key] += table[key] || 0);
+  }
+  Object.keys(totals).forEach(key => totals[key] = Math.min(maxLoss, totals[key]));
+  return totals;
+}
+
 function loadState() {
   try {
     let rawSave = null;
@@ -388,10 +404,11 @@ function loadState() {
     merged.novel.completed = Array.isArray(merged.novel.completed) ? merged.novel.completed : [];
     merged.novel.choices = Array.isArray(merged.novel.choices) ? merged.novel.choices : [];
     merged.novel.history = Array.isArray(merged.novel.history) ? merged.novel.history : [];
+    if (merged.stats.attention === undefined) merged.stats.attention = 65;
     if (hoursAway >= 1) {
-      const hourlyLoss = { hugs: 4, affection: 3, messages: 4, energy: 4, trust: 2 };
-      Object.entries(hourlyLoss).forEach(([key, loss]) => {
-        merged.stats[key] = clamp(merged.stats[key] - Math.min(45, hoursAway * loss));
+      const offlineLoss = calculateOfflineLoss(saved.lastSaved || Date.now(), Date.now());
+      Object.entries(offlineLoss).forEach(([key, loss]) => {
+        if (merged.stats[key] !== undefined) merged.stats[key] = clamp(merged.stats[key] - loss);
       });
       offlinePenaltyNotice = true;
     }
@@ -1283,6 +1300,7 @@ window.addEventListener("beforeunload", saveState);
 
 
 /* === FINAL DEFINITIVO: dificultad, alertas sobre el reporterito, sueño 00-08 y chat contextual === */
+const DECAY_INTERVAL_MS = 10000;
 let sceneAlertTimer = null;
 let sceneAlertDeadline = 0;
 let pendingFollowUp = null;
@@ -1308,6 +1326,12 @@ function updateSleepLock() {
     button.disabled = locked;
     button.setAttribute("aria-disabled", locked ? "true" : "false");
   });
+  if (locked) {
+    currentEvent = null;
+    clearTimeout(sceneAlertTimer);
+    $("#sceneAlert")?.classList.add("hidden");
+    closeModal("eventModal");
+  }
   let banner = $("#sleepBanner");
   if (locked && !banner) {
     banner = document.createElement("div");
@@ -1443,19 +1467,21 @@ function handlePanchitoAction(action) {
 function showRandomEvent() {
   if (isSleepTime() || currentEvent || document.visibilityState === "hidden" || !$("#chatModal").classList.contains("hidden")) return;
   currentEvent = randomFrom(events);
-  sceneAlertDeadline = Date.now() + 25000;
+  sceneAlertDeadline = Date.now() + 30000;
   const alert = $("#sceneAlert");
+  if (!alert) return;
   alert.classList.remove("hidden");
-  alert.textContent = currentEvent.icon === "⚠️" ? "❗" : "!";
-  setMessage("¡El reporterito tiene una escena pendiente! Toca el signo de admiración antes de que decida solito.");
+  alert.textContent = "❗";
+  alert.title = "Toca para ver qué le pasa al reporterito";
+  setMessage("El reporterito tiene algo pasando. Toca el signo ❗ sobre su cabeza para decidir qué hacer.");
   clearTimeout(sceneAlertTimer);
-  sceneAlertTimer = setTimeout(autoResolvePendingEvent, 25000);
+  sceneAlertTimer = setTimeout(autoResolvePendingEvent, 30000);
 }
 
 function openPendingEvent() {
   if (!currentEvent) return;
   clearTimeout(sceneAlertTimer);
-  $("#sceneAlert").classList.add("hidden");
+  $("#sceneAlert")?.classList.add("hidden");
   $("#eventIcon").textContent = currentEvent.icon;
   $("#eventTitle").textContent = currentEvent.title;
   $("#eventText").textContent = currentEvent.text;
@@ -1466,7 +1492,7 @@ function openPendingEvent() {
 function autoResolvePendingEvent() {
   if (!currentEvent) return;
   const badChoiceIndex = currentEvent.choices.findIndex(choice => choice.danger);
-  $("#sceneAlert").classList.add("hidden");
+  $("#sceneAlert")?.classList.add("hidden");
   const title = currentEvent.title;
   currentEvent = null;
   changeStats({ affection: -6, messages: -5, trust: -4, energy: -4 });
@@ -1479,7 +1505,7 @@ function autoResolvePendingEvent() {
 function resolveEvent(index) {
   if (!currentEvent) return;
   clearTimeout(sceneAlertTimer);
-  $("#sceneAlert").classList.add("hidden");
+  $("#sceneAlert")?.classList.add("hidden");
   const choice = currentEvent.choices[index];
   closeModal("eventModal");
   currentEvent = null;
@@ -1493,17 +1519,18 @@ function resolveEvent(index) {
 }
 
 function decay() {
+  const sleepLossPerTick = 6 / (3600000 / DECAY_INTERVAL_MS);
   const baseLoss = isSleepTime()
-    ? { hugs: 1, affection: 1, messages: 1, energy: 1, trust: 0, attention: 1 }
-    : { hugs: 4, affection: 3, messages: 5, energy: 4, trust: 3, attention: 4 };
-  const criticalMultiplier = isCritical() ? 1.15 : 1;
+    ? { hugs: sleepLossPerTick, affection: sleepLossPerTick, messages: sleepLossPerTick, energy: sleepLossPerTick, trust: sleepLossPerTick, attention: sleepLossPerTick }
+    : { hugs: 0.24, affection: 0.18, messages: 0.30, energy: 0.20, trust: 0.14, attention: 0.24 };
+  const criticalMultiplier = isCritical() ? 1.08 : 1;
   Object.entries(baseLoss).forEach(([key, loss]) => {
     state.stats[key] = Math.max(0, state.stats[key] - loss * criticalMultiplier);
   });
   decayCycles++;
-  if (!isSleepTime() && decayCycles % 3 === 0) {
+  if (!isSleepTime() && decayCycles % 6 === 0) {
     const randomStat = randomFrom(Object.keys(state.stats));
-    state.stats[randomStat] = Math.max(0, state.stats[randomStat] - 3 * criticalMultiplier);
+    state.stats[randomStat] = Math.max(0, state.stats[randomStat] - 0.6 * criticalMultiplier);
   }
   render();
 }
@@ -1673,7 +1700,7 @@ actionMap.piojito = () => { applyCareStats({ affection: 4, hugs: 3, trust: 2, at
 
 buildInterface(); updateClock();
 setInterval(updateClock, 30000);
-setInterval(decay, 4000);
+setInterval(decay, DECAY_INTERVAL_MS);
 setInterval(updateCooldownButtons, 250);
 setInterval(showTreeAmbientMessage, 28000);
 setInterval(cyclePanchitoBehavior, 12000);
@@ -1684,8 +1711,10 @@ setInterval(() => {
     setMessage(randomFrom(ambientMessages)); state.counts.thoughts++; checkAchievements(); saveState();
   }
 }, 24000);
-setTimeout(showRandomEvent, 45000);
-setInterval(showRandomEvent, 120000);
+// Las escenas NO se abren solas: cada 5 minutos aparece un ❗ sobre el reporterito.
+// La Directiva debe tocarlo para abrir la escena y decidir qué hacer.
+setTimeout(showRandomEvent, 300000);
+setInterval(showRandomEvent, 300000);
 
 
 /* Diario del Reporterito: registra acciones, decisiones y pensamientos sin cambiar la mecánica principal. */
