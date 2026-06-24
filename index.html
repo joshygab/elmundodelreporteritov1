@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#17091d">
   <meta name="description" content="Un pequeño Tamagotchi romántico para cuidar al reporterito.">
-  <title>Tamagotchi del Reporterito</title>
+  <title>Reporterito Life · El Mundo del Reporterito</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-mood="tranquilo">
   <div class="sky-effects" id="skyEffects" aria-hidden="true"></div>
+  <aside class="alive-world-frame" id="aliveWorldFrame" aria-live="polite"><span>VIDA DEL REPORTERITO</span><b><i id="aliveDaysCount">1</i> DÍAS VIVO</b><small>VIDA <strong id="vitalityValue">68%</strong></small></aside>
 
   <main class="page-shell">
     <header class="hero">
-      <p class="eyebrow">DEPARTAMENTO DE AMOR · UNIDAD 01</p>
-      <h1>Tamagotchi del<br><span>Reporterito</span></h1>
+      <p class="eyebrow">REPORTERITO LIFE · DEPARTAMENTO DE AMOR</p>
+      <h1>El Mundo del<br><span>Reporterito</span></h1>
       <p>Bienvenida, Directiva. El reporterito necesita amor para sobrevivir el día.</p>
     </header>
 
@@ -22,11 +23,14 @@
       <button data-world-target="roomScene">🏠 <span>Cuarto</span></button>
       <button data-world-action="chat">📱 <span>Chat</span></button>
       <button data-world-target="giftCollection">🎁 <span>Regalos</span></button>
+      <button data-world-target="outfitShop">🛍 <span>Ropa</span></button>
       <button data-world-target="loveTreePanel">🌳 <span>Árbol</span></button>
       <button data-world-target="panchitoPanel">🐶 <span>Panchito</span></button>
       <button data-world-target="achievementSection">🏆 <span>Logros</span></button>
       <button data-world-target="memoryAlbumTitle">📖 <span>Recuerdos</span></button>
-      <button data-world-target="reporterDiaryTitle">📝 <span>Diario</span></button>
+      <button data-world-target="diarySection">📓 <span>Diario</span></button>
+      <button data-world-target="lifeTimelineSection">🧬 <span>Vida</span></button>
+      <button data-world-target="miniGamesSection">🎮 <span>Juegos</span></button>
     </nav>
 
     <section class="console" aria-label="Consola del reporterito">
@@ -73,14 +77,27 @@
               <span class="pet-zzz">Zzz</span>
               <span class="pet-thought">♥</span>
             </button>
+            <button class="event-alert hidden" id="lifeEventAlert" aria-label="Descubrir evento pendiente">!</button>
 
             <button class="panchito" id="panchito" aria-label="Panchito, el perrito del reporterito">
               <span class="dog-tail"></span><span class="dog-body"><i class="dog-spot"></i></span>
               <span class="dog-head"><i class="dog-ear left"></i><i class="dog-ear right"></i><b class="dog-eye left"></b><b class="dog-eye right"></b><em></em></span>
               <span class="dog-leg left"></span><span class="dog-leg right"></span><span class="dog-heart">♥</span>
             </button>
+            <button class="directiva-character hidden" id="directivaCharacter" aria-label="La Directiva visitó el mundo">
+              <span class="directiva-shadow"></span>
+              <span class="directiva-hair"></span>
+              <span class="directiva-face"><i class="eye left"></i><i class="eye right"></i><b></b></span>
+              <span class="directiva-body"><i>♥</i></span>
+              <span class="directiva-arm left"></span><span class="directiva-arm right"></span>
+              <span class="directiva-leg left"></span><span class="directiva-leg right"></span>
+              <span class="directiva-heart">♥</span>
+            </button>
             <div class="room-time-card"><span id="roomPeriodIcon">☀</span><b id="roomPeriodName">MAÑANA</b></div>
+            <div class="life-status-card"><span id="lifeMoodIcon">😊</span><b id="lifeMoodName">FELIZ</b><small>ÁNIMO</small></div>
+            <div class="heart-weather-card"><span id="heartWeatherIcon">☀️</span><b id="heartWeatherName">DÍA BONITO</b></div>
             <div class="room-theme-switch" aria-label="Decoración del cuarto"><button data-room-theme="romantic" aria-label="Tema romántico">♥</button><button data-room-theme="cozy" aria-label="Tema cálido">☀</button><button data-room-theme="berry" aria-label="Tema morado">✦</button></div>
+            <div class="death-overlay hidden" id="deathOverlay"><b>×_×</b><h3>El reporterito ya no pudo continuar.</h3><p>Su historia terminó, pero antes de comenzar de nuevo puede revisar lo que vivió.</p><div class="death-summary" id="deathSummary"></div><button id="restartLifeButton">↻ Iniciar una nueva generación desde cero</button></div>
           </div>
 
           <div class="dialogue" aria-live="polite">
@@ -92,6 +109,23 @@
 
       <div class="status-panel" id="statusPanel" aria-label="Barras de estado"></div>
 
+      <section class="life-dashboard" aria-labelledby="lifeDashboardTitle">
+        <header><div><p class="eyebrow">REPORTERITO LIFE</p><h2 id="lifeDashboardTitle">Estado de su vida</h2></div><span>💰 $<b id="lifeMoney">0</b></span></header>
+        <div class="life-stat-grid" id="lifeStatGrid"></div>
+        <div class="career-strip"><span>🏢 Oficina <b id="officeLevelLabel">Nivel 1</b></span><span>Prestigio <b id="prestigeLabel">10%</b></span><span>🐶 Pancho <b id="panchoFriendshipLabel">65%</b></span><span>💌 Recuerdos <b id="lifeMemoryCount">0</b></span></div>
+        <div class="activity-status-card" id="activityStatusCard"><span id="activityIcon">💤</span><div><b id="activityTitle">Sin actividad</b><small id="activityDetail">El reporterito está esperando una nueva ocupación.</small><em id="activityTimer">--:--</em></div></div>
+      </section>
+
+      <div class="actions" aria-label="Acciones de cuidado">
+        <button data-action="hug"><span>🫂</span>Darle abrazo</button>
+        <button data-action="message"><span>💬</span>Mandarle mensaje</button>
+        <button data-action="love"><span>💘</span>Decirle te amo</button>
+        <button data-action="piojito"><span>✨</span>Dar piojito</button>
+        <button data-action="visit"><span>🚪</span>Visita de la directiva</button>
+        <button data-action="burger"><span>🍔</span>Mandar hamburguesa</button>
+        <button data-action="reward" id="rewardButton" class="reward-button hidden"><span>🎁</span>Abrir recompensa</button>
+      </div>
+
       <section class="panchito-panel" id="panchitoPanel" aria-labelledby="panchitoTitle">
         <div>
           <p class="eyebrow">COMPAÑERO DE APOYO EMOCIONAL</p>
@@ -102,6 +136,10 @@
           <span>CARICIAS <b id="panchitoPets">0</b></span>
           <span>COMIDAS <b id="panchitoFeeds">0</b></span>
           <span>JUEGOS <b id="panchitoPlays">0</b></span>
+          <span>HAMBRE <b id="panchitoHunger">75%</b></span>
+          <span>ENERGÍA <b id="panchitoEnergy">72%</b></span>
+          <span>FELICIDAD <b id="panchitoHappiness">78%</b></span>
+          <span>AMISTAD <b id="panchitoFriendship">65%</b></span>
         </div>
         <div class="panchito-actions">
           <button data-panchito-action="pet">🐾 Acariciar</button>
@@ -150,16 +188,6 @@
         </div>
       </section>
 
-      <div class="actions" aria-label="Acciones de cuidado">
-        <button data-action="hug"><span>🫂</span>Darle abrazo</button>
-        <button data-action="message"><span>💬</span>Mandarle mensaje</button>
-        <button data-action="love"><span>💘</span>Decirle te amo</button>
-        <button data-action="piojito"><span>✨</span>Dar piojito</button>
-        <button data-action="visit"><span>🚪</span>Visita de la directiva</button>
-        <button data-action="burger"><span>🍔</span>Mandar hamburguesa</button>
-        <button data-action="reward" id="rewardButton" class="reward-button hidden"><span>🎁</span>Abrir recompensa</button>
-      </div>
-
       <div class="console-footer">
         <span>HECHO CON ♥ PARA LA DIRECTIVA</span>
         <button id="helpButton" class="tiny-button">?</button>
@@ -168,11 +196,40 @@
 
     <section class="gift-collection" id="giftCollection" aria-labelledby="giftCollectionTitle">
       <header class="gift-header">
-        <div><p class="eyebrow">OBJETOS QUE SE QUEDAN PARA SIEMPRE</p><h2 id="giftCollectionTitle">Colección de regalos</h2></div>
-        <span><b id="giftCount">0</b> / 10 encontrados</span>
+        <div><p class="eyebrow">OBJETOS GUARDADOS DURANTE ESTA VIDA</p><h2 id="giftCollectionTitle">Colección de regalos</h2></div>
+        <span><b id="giftCount">0</b> / 15 encontrados</span>
       </header>
       <p class="gift-intro">Cada regalo obtenido aparece físicamente en el cuarto. Tócalo ahí o usa “Mover” para cambiarlo de lugar.</p>
       <div class="gift-grid" id="giftGrid"></div>
+    </section>
+
+    <section class="outfit-shop" id="outfitShop" aria-labelledby="outfitShopTitle">
+      <header class="shop-header"><div><p class="eyebrow">GUARDARROPA PIXELADO</p><h2 id="outfitShopTitle">Ropa del Reporterito</h2><p>El Árbol de Amor entrega monedas al subir de nivel. La ropa permanece guardada mientras el reporterito siga con vida.</p></div><span class="coin-wallet">◉ <b id="coinCount">0</b> monedas</span></header>
+      <div class="outfit-grid" id="outfitGrid"></div>
+      <div class="store-divider"><span>OBJETOS Y DECORACIONES</span></div>
+      <div class="store-grid" id="lifeStoreGrid"></div>
+    </section>
+
+    <section class="office-section" id="officeSection" aria-labelledby="officeTitle">
+      <header><div><p class="eyebrow">CARRERA DEL REPORTERITO</p><h2 id="officeTitle">Oficina evolutiva</h2></div><span>NIVEL <b id="officeLevel">1</b> / 7</span></header>
+      <div class="office-visual" id="officeVisual" data-office-level="1"><div class="office-window">✦</div><div class="office-desk-mini">▰</div><div class="office-plant-mini">♣</div><div class="office-photo-mini">♥</div><div class="office-pancho-bed">🐾</div><div class="office-lights">✦ ♥ ✦</div></div>
+      <p id="officeMessage">El reporterito comenzó en una oficina pequeña, pero llena de ganas.</p>
+    </section>
+
+    <section class="life-timeline-section" id="lifeTimelineSection" aria-labelledby="lifeTimelineTitle">
+      <header><div><p class="eyebrow">HISTORIA PERSONALIZADA</p><h2 id="lifeTimelineTitle">Vida del Reporterito</h2><p>Todo lo que hace, decide y recuerda queda registrado aquí.</p></div><span><b id="timelineCount">0</b> momentos</span></header>
+      <div class="personality-card"><span>PERSONALIDAD ACTUAL</span><b id="personalitySummary">Cariñoso y curioso</b><small id="memoryInfluence">La historia apenas está comenzando.</small></div>
+      <div class="life-timeline" id="lifeTimeline"></div>
+    </section>
+
+    <section class="mini-games-section" id="miniGamesSection" aria-labelledby="miniGamesTitle">
+      <header><div><p class="eyebrow">RECREO PIXELADO</p><h2 id="miniGamesTitle">Minijuegos</h2><p>Partidas cortas que entregan monedas, diversión y recuerdos.</p></div></header>
+      <div class="mini-game-grid" id="miniGameGrid">
+        <button data-minigame="kisses">💋<b>Atrapa besitos</b><small>Atrapa tres antes de que escapen.</small></button>
+        <button data-minigame="hearts">💗<b>Recolecta corazones</b><small>Encuentra el corazón verdadero.</small></button>
+        <button data-minigame="pancho">🐶<b>Encuentra a Pancho</b><small>Descubre dónde se escondió.</small></button>
+        <button data-minigame="coffee">☕<b>Lleva café</b><small>Elige el camino correcto.</small></button>
+      </div>
     </section>
 
     <section class="memory-album-section" aria-labelledby="memoryAlbumTitle">
@@ -191,22 +248,15 @@
       <div class="memory-album-grid" id="memoryAlbum"></div>
     </section>
 
-
-
-    <section class="reporter-diary-section" id="reporterDiary" aria-labelledby="reporterDiaryTitle">
+    <section class="diary-section" id="diarySection" aria-labelledby="diaryTitle">
       <header class="diary-header">
-        <div>
-          <p class="eyebrow">BITÁCORA PRIVADA DEL REPORTERITO</p>
-          <h2 id="reporterDiaryTitle">Diario del Reporterito</h2>
-          <p>Aquí el reporterito guarda lo que hizo la Directiva, decisiones importantes, pensamientos y momentos que no quiere olvidar.</p>
-        </div>
-        <div class="diary-actions">
-          <span><small>ENTRADAS</small><b id="diaryCount">0</b></span>
-          <button id="diaryThoughtButton" type="button">💭 Nuevo pensamiento</button>
-        </div>
+        <div><p class="eyebrow">MEMORIA INTERNA · REGISTRO DE ESTA VIDA</p><h2 id="diaryTitle">Diario del Reporterito</h2><p>El reporterito escribe aquí lo que no quiere olvidar mientras siga con vida.</p></div>
+        <span><b id="diaryCount">0</b> entradas guardadas</span>
       </header>
-      <div class="diary-highlight" id="diaryHighlight">El diario está esperando su primer pensamiento bonito.</div>
-      <div class="diary-list" id="diaryList"></div>
+      <div class="diary-layout">
+        <aside class="diary-today"><span id="diaryDate">HOY</span><div id="dailyThought">El reporterito está pensando...</div><button id="newThoughtButton">✦ Ver otro pensamiento</button></aside>
+        <div class="diary-entries" id="diaryEntries"></div>
+      </div>
     </section>
 
     <section class="achievements-section" id="achievementSection">
@@ -217,7 +267,7 @@
       <div class="achievement-grid" id="achievementGrid"></div>
     </section>
 
-    <footer>El amor se guarda automáticamente en esta consola · v1.0</footer>
+    <footer>Reporterito Life se guarda automáticamente en este navegador · EDICIÓN FINAL</footer>
   </main>
 
   <div class="modal-backdrop hidden" id="eventModal" role="dialog" aria-modal="true" aria-labelledby="eventTitle">
@@ -246,8 +296,9 @@
       <button class="close-modal" data-close="helpModal" aria-label="Cerrar">×</button>
       <p class="eyebrow">MANUAL DE EMERGENCIA</p>
       <h2 id="helpTitle">Cómo cuidar al reporterito</h2>
-      <p>Sus barras bajan con el tiempo. Dale amor, mensajes, comida y piojito para que sobreviva el día. Los eventos aparecen solos y el progreso queda guardado.</p>
+      <p>Sus barras bajan lentamente. Dale amor, mensajes, comida y piojito para acompañarlo. Cuando aparezca ❗ sobre su cabeza, tócalo para descubrir un evento y tomar una decisión. El progreso se guarda en este navegador.</p>
       <p class="tiny-hint">Dato clasificado: tocar varias veces al reporterito puede ponerlo nervioso…</p>
+      <button id="resetGameButton" class="reset-game-button">Reiniciar mundo (protegido)</button>
     </article>
   </div>
 
@@ -295,6 +346,43 @@
       </div>
       <div class="novel-options" id="novelOptions"></div>
       <footer><span>Escenas completadas: <b id="novelCompletedCount">0</b></span><button id="nextNovelButton" class="hidden">Siguiente escena →</button></footer>
+    </article>
+  </div>
+
+  <div class="modal-backdrop world-scene-backdrop hidden" id="worldSceneModal" role="dialog" aria-modal="true" aria-labelledby="worldSceneTitle">
+    <article class="world-scene-card">
+      <header><span id="worldSceneIcon">✦</span><div><p class="eyebrow" id="worldSceneCategory">ESCENA DEL MUNDO</p><h2 id="worldSceneTitle">Algo está pasando</h2></div><button data-close="worldSceneModal" aria-label="Cerrar escena">×</button></header>
+      <div class="world-scene-illustration"><div class="scene-reporter">R</div><div class="scene-dog">🐶</div><div class="scene-effect" id="worldSceneEffect">♥</div></div>
+      <p id="worldSceneText"></p>
+      <div class="world-scene-options" id="worldSceneOptions"></div>
+    </article>
+  </div>
+
+  <div class="modal-backdrop bitlife-backdrop hidden" id="lifeEventModal" role="dialog" aria-modal="true" aria-labelledby="lifeEventTitle">
+    <article class="bitlife-event-card">
+      <header><span id="lifeEventRarity">COMÚN</span><button data-close="lifeEventModal" aria-label="Cerrar">×</button></header>
+      <div class="bitlife-illustration" id="lifeEventIllustration"><span id="lifeEventIcon">❗</span><i>✦</i><b>♥</b></div>
+      <div class="bitlife-copy"><p class="eyebrow">DECISIÓN DEL DÍA</p><h2 id="lifeEventTitle">Algo ocurrió</h2><p id="lifeEventDescription"></p></div>
+      <div class="bitlife-options" id="lifeEventOptions"></div>
+    </article>
+  </div>
+
+  <div class="modal-backdrop hidden" id="eventResultModal" role="dialog" aria-modal="true" aria-labelledby="eventResultTitle">
+    <article class="modal-card result-card"><span class="modal-icon" id="eventResultIcon">✦</span><p class="eyebrow">CONSECUENCIA</p><h2 id="eventResultTitle">La historia cambió</h2><p id="eventResultText"></p><div class="result-effects" id="eventResultEffects"></div><button class="primary-modal-button" data-close="eventResultModal">Continuar</button></article>
+  </div>
+
+  <div class="modal-backdrop hidden" id="miniGameModal" role="dialog" aria-modal="true" aria-labelledby="miniGameTitle">
+    <article class="modal-card minigame-card"><button class="close-modal" data-close="miniGameModal">×</button><p class="eyebrow">MINIJUEGO</p><h2 id="miniGameTitle">Partida pixelada</h2><p id="miniGamePrompt"></p><div class="minigame-board" id="miniGameBoard"></div><p class="minigame-status" id="miniGameStatus"></p></article>
+  </div>
+
+  <div class="modal-backdrop hidden" id="directivaModal" role="dialog" aria-modal="true" aria-labelledby="directivaModalTitle">
+    <article class="directiva-modal-card">
+      <button class="close-modal" data-close="directivaModal" aria-label="Cerrar">×</button>
+      <p class="eyebrow">LA DIRECTIVA VIVE EN EL MUNDO</p>
+      <h2 id="directivaModalTitle">La Directiva llegó a la oficina</h2>
+      <p id="directivaModalText">El reporterito se emocionó muchísimo al verla.</p>
+      <div class="directiva-stat-grid" id="directivaStatGrid"></div>
+      <div class="directiva-actions" id="directivaActions"></div>
     </article>
   </div>
 
