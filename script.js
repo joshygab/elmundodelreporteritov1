@@ -3,23 +3,31 @@
 const STORAGE_KEY = "reporterito-save-v1";
 const WINDOW_SAVE_PREFIX = "REPORTERITO_SAVE::";
 const STAT_INFO = {
-  hugs: { label: "Abrazos", icon: "🫂" },
   affection: { label: "Cariño", icon: "💗" },
+  attention: { label: "Atención", icon: "✦" },
   messages: { label: "Mensajes", icon: "💬" },
   energy: { label: "Energía emocional", icon: "⚡" },
-  trust: { label: "Confianza", icon: "🔐" }
+  trust: { label: "Confianza", icon: "🔐" },
+  hugs: { label: "Abrazos", icon: "🫂" }
 };
 
 const DEFAULT_STATE = {
-  stats: { hugs: 68, affection: 72, messages: 61, energy: 66, trust: 74 },
+  stats: { hugs: 68, affection: 72, attention: 65, messages: 61, energy: 66, trust: 74 },
   achievements: [], counts: { hugs: 0, messages: 0, piojitos: 0, thoughts: 0 },
   chat: { totalSent: 0, recent: [], unlockedSpecials: [] },
   tree: { loveTreeXP: 0, loveTreeLevel: 1, stage: "Semillita", memories: [] },
   album: { memories: [], streak: 1, lastPlayedDate: "" },
   world: { timePeriod: "morning", roomTheme: "romantic", reporterVisualState: "idle", roomVisits: 0, lastDailyGift: "" },
-  panchito: { mood: "happy", action: "idle", pets: 0, feeds: 0, plays: 0, eventsSeen: [] },
+  panchito: { mood: "happy", action: "idle", pets: 0, feeds: 0, plays: 0, eventsSeen: [], hunger: 75, energy: 72, happiness: 78, mischief: 12, friendship: 65 },
+  directiva: { present: false, mood: "calm", activity: "visit", lastVisitAt: 0, nextVisitAt: 0, stats: { affection: 78, happiness: 76, energy: 72, hunger: 70, stress: 24, mood: 82, trust: 74 }, messages: [], dates: [], sharedMemories: [] },
   gifts: { owned: [], visible: [], positions: {} },
   novel: { completed: [], choices: [], totalCompleted: 0, helpedCount: 0, history: [] },
+  economy: { coins: 0, totalEarned: 0, unlockedOutfits: ["classic"], equippedOutfit: "classic", awardedLevels: [1], ownedItems: [], giftsForDirectiva: 0 },
+  simulation: { happiness: 70, hunger: 75, motivation: 66, fun: 64, prestige: 10, officeLevel: 1, lastAutonomyAt: Date.now(), autonomousActions: 0, workSessions: 0, lettersWritten: 0, extremeSince: 0, hungerZeroSince: 0, currentActivity: null },
+  eventEngine: { pending: null, nextAt: 0, history: [], decisions: [], seenIds: [], rarityCounts: {}, traits: { support:0, avoidance:0, flowers:0, generosity:0, courage:0, humor:0, panchoCare:0 }, unlockedMythics: [], totalResolved: 0 },
+  timeline: [],
+  minigames: { played: 0, wins: 0, bestScores: {} },
+  life: { mood: "happy", moodExpiresAt: 0, weather: "beautiful", weatherDate: "", recentThoughts: [], recentScenes: [], scenesSeen: [], sceneChoices: [], letters: [], dreams: [], lastDreamDate: "", dreamShownDate: "", dailyVisits: 0, visitDates: [], lastVisitAt: 0, journal: [], roomInteractions: 0, criticalRecoveries: 0, firstMemories: {}, lastImportant: {}, pendingScene: null, aliveSince: Date.now(), isDead: false, deathAt: 0, deathCount: 0, lastAliveDays: 0, lastOfflineHours: 0, totalOfflinePenalty: 0, deathSummary: null },
   rewardOpened: false, startedAt: Date.now(), lastSaved: Date.now(), highLoveSince: null,
   petTaps: 0, daringUntil: 0
 };
@@ -46,7 +54,23 @@ const achievementInfo = {
   panchitoFriend: ["🐾", "Mejor amigo de Panchito", "Panchito considera al reporterito su compañero oficial de aventuras"],
   happyPanchito: ["🐶", "Panchito feliz", "Panchito movió la colita tantas veces que desbloqueó felicidad premium"],
   cozyRoom: ["🏠", "Habitación acogedora", "El cuarto del reporterito se llenó de recuerdos bonitos"],
-  confidant: ["🫶", "Confidente", "El reporterito siente que puede contarle todo a la Directiva"]
+  confidant: ["🫶", "Confidente", "El reporterito siente que puede contarle todo a la Directiva"],
+  firstWorldVisit: ["🚪", "Primera visita al mundo", "El reporterito notó que la Directiva entró a su pequeño mundo"],
+  livingRoom: ["🛏", "Cuarto vivo", "La Directiva exploró los rincones del cuarto del reporterito"],
+  constantDirector: ["📅", "Directiva constante", "El reporterito recibió visitas durante siete días distintos"],
+  fullDiary: ["📓", "Diario lleno", "El diario guardó cincuenta momentos del reporterito"],
+  romanticCollector: ["🎁", "Coleccionista romántica", "Los quince regalos encontraron un lugar en el mundo"],
+  starryNight: ["🌙", "Noche de estrellas", "La Directiva visitó el cuarto durante la madrugada"],
+  prettyMorning: ["☀", "Mañana bonita", "El reporterito empezó la mañana acompañado"],
+  savedReporter: ["🛟", "Reporterito salvado", "El reporterito salió del modo crítico gracias al cuidado recibido"],
+  growingWorld: ["🌎", "Mundo en crecimiento", "El cuarto, los recuerdos y el Árbol de Amor comenzaron a florecer"],
+  hundredHugs: ["🫂", "Cien abrazos", "El reporterito recibió cien abrazos durante su vida"],
+  infiniteLove: ["💞", "Amor infinito", "El amor se mantuvo peligrosamente alto"],
+  bestDirector: ["👑", "Mejor Directiva del mundo", "El reporterito construyó una historia llena de apoyo"],
+  supremeDirector: ["🏢", "Director supremo", "La oficina alcanzó su forma legendaria"],
+  eventExplorer: ["❗", "Vida inesperada", "Cincuenta decisiones cambiaron la historia"],
+  mythHunter: ["🌌", "Imposible pero cierto", "El reporterito vivió un evento mítico"],
+  gameMaster: ["🎮", "Recreo legendario", "La Directiva ganó veinte minijuegos"]
 };
 
 const moodMessages = {
@@ -58,6 +82,7 @@ const moodMessages = {
   abrazos: ["Se detectó una severa falta de abrazos.", "El reporterito necesita un abrazo urgentemente.", "Sin abrazos, el sistema del reporterito empieza a fallar."],
   esperando: ["El reporterito revisó el celular otra vez.", "El reporterito detectó una notificación fantasma.", "El reporterito está esperando mensajito de la Directiva."],
   critico: ["El reporterito necesita atención urgente antes de ponerse dramático."],
+  muerto: ["El reporterito se quedó sin vida y el mundo deberá comenzar completamente desde cero."],
   dormido: ["El reporterito duerme pensando en la Directiva.", "El reporterito está soñando con abrazos.", "El reporterito entró en modo sueño pixelado."],
   enfermo: ["Diagnóstico: enamorado hasta las orejas.", "El reporterito tiene sobredosis de amor.", "No hay cura. Solo más besitos."],
   atrevido: ["La directiva se veía demasiado guapa hoy.", "Pensamientos impuros detectados.", "Alerta: reporterito extremadamente enamorado."]
@@ -256,8 +281,81 @@ const GIFT_DEFINITIONS = [
   { id: "letter", icon: "💌", name: "Carta", description: "Un mensaje que merecía quedarse para siempre." },
   { id: "song", icon: "🎵", name: "Canción favorita", description: "Hace que el cuarto suene romántico en silencio." },
   { id: "clover", icon: "🍀", name: "Trébol", description: "Panchito asegura que trae buena suerte." },
-  { id: "balloon", icon: "🎈", name: "Globo", description: "Nunca termina de desinflarse porque es pixelado." }
+  { id: "balloon", icon: "🎈", name: "Globo", description: "Nunca termina de desinflarse porque es pixelado." },
+  { id: "dogCollar", icon: "🦴", name: "Collar de Panchito", description: "Panchito camina orgulloso cuando lo usa." },
+  { id: "hugPillow", icon: "🛏", name: "Almohada de abrazos", description: "Sustituto temporal para días de extrañar." },
+  { id: "moonLamp", icon: "🌙", name: "Lámpara de luna", description: "Ilumina suavemente las madrugadas." },
+  { id: "memoryFrame", icon: "🖼", name: "Marco de recuerdo", description: "Protege uno de los momentos favoritos." },
+  { id: "specialPlant", icon: "🪴", name: "Planta especial", description: "Creció con paciencia y conversaciones bonitas." }
 ];
+
+const OUTFIT_DEFINITIONS = [
+  { id:"classic", icon:"👔", name:"Reportero clásico", description:"La ropa con la que empezó todo.", cost:0, color:"#e8e5d5" },
+  { id:"sweater", icon:"🩷", name:"Suéter rosita", description:"Calientito y peligrosamente tierno.", cost:35, color:"#d9658f" },
+  { id:"hoodie", icon:"💜", name:"Sudadera morada", description:"Para tardes de trabajo y piojito.", cost:60, color:"#7650a1" },
+  { id:"suit", icon:"🕴", name:"Traje de gala", description:"El reporterito se siente muy importante.", cost:90, color:"#282a35" },
+  { id:"pajamas", icon:"🌙", name:"Pijama pixelada", description:"Uniforme oficial para soñar bonito.", cost:120, color:"#7ca0b9" },
+  { id:"press", icon:"📰", name:"Chaleco de prensa", description:"Listo para una cobertura romántica.", cost:160, color:"#8d354a" },
+  { id:"legendary", icon:"✨", name:"Atuendo legendario", description:"Tejido con hojas del Árbol de Amor.", cost:250, color:"#e0ad4f" },
+  { id:"spider", icon:"🕸", name:"Disfraz arácnido", description:"Héroe rojo para coberturas imposibles.", cost:180, color:"#c92f45" },
+  { id:"flash", icon:"⚡", name:"Disfraz velocista", description:"Llega antes que cualquier noticia.", cost:180, color:"#d63b32" },
+  { id:"bat", icon:"🦇", name:"Disfraz nocturno", description:"Periodismo desde las sombras.", cost:190, color:"#27283a" },
+  { id:"super", icon:"🦸", name:"Disfraz superreportero", description:"Capa roja y confianza de acero.", cost:200, color:"#3264a8" },
+  { id:"dj", icon:"🎧", name:"Disfraz de DJ", description:"Mezcla canciones para la Directiva.", cost:145, color:"#8147a8" },
+  { id:"football", icon:"⚽", name:"Futbolista", description:"Uniforme para reportar desde la cancha.", cost:130, color:"#3b8a62" },
+  { id:"director", icon:"💼", name:"Director general", description:"El traje del jefe máximo del amor.", cost:260, color:"#33323c" },
+  { id:"baseball", icon:"⚾", name:"Beisbolista", description:"Gorra, uniforme y jonrón emocional.", cost:140, color:"#eee7d9" }
+];
+
+const LIFE_STAT_INFO = {
+  love:{icon:"❤️",label:"Amor"}, happiness:{icon:"😊",label:"Felicidad"}, energy:{icon:"⚡",label:"Energía"}, hunger:{icon:"🍔",label:"Hambre"},
+  motivation:{icon:"🧠",label:"Motivación"}, pancho:{icon:"🐶",label:"Amistad Pancho"}, prestige:{icon:"🏢",label:"Prestigio"}, trust:{icon:"🌟",label:"Confianza"}, fun:{icon:"😂",label:"Diversión"}
+};
+
+const LIFE_STORE_ITEMS = [
+  {id:"plantDecor",icon:"🪴",name:"Planta de oficina",cost:28,type:"decor"},{id:"romanticFrame",icon:"🖼",name:"Cuadro romántico",cost:35,type:"decor"},
+  {id:"panchoToy",icon:"🎾",name:"Juguete de Pancho",cost:24,type:"pancho"},{id:"panchoBed",icon:"🧺",name:"Cama de Pancho",cost:48,type:"pancho"},
+  {id:"deskTeddy",icon:"🧸",name:"Peluche de escritorio",cost:32,type:"decor"},{id:"moonLight",icon:"🌙",name:"Lámpara lunar",cost:55,type:"decor"},
+  {id:"giftBurger",icon:"🍔",name:"Hamburguesa regalo",cost:12,type:"gift"},{id:"giftCoffee",icon:"☕",name:"Café regalo",cost:9,type:"gift"},
+  {id:"giftFlower",icon:"🌹",name:"Flor regalo",cost:16,type:"gift"},{id:"giftLetter",icon:"💌",name:"Carta bonita",cost:8,type:"gift"},
+  {id:"giftKiss",icon:"💋",name:"Besitos pixelados",cost:6,type:"gift"},{id:"premiumDesk",icon:"🖥",name:"Escritorio premium",cost:90,type:"decor"}
+];
+
+/* Motor modular de eventos: 720 semillas producen miles de variaciones narrativas. */
+const EVENT_CONTENT_COUNTS = { common:300, romantic:150, pancho:100, rare:100, legendary:50, mythical:20 };
+const EVENT_RARITIES = {
+  common:{label:"COMÚN",weight:610,icon:"☕"}, romantic:{label:"ROMÁNTICO",weight:225,icon:"💗"}, pancho:{label:"PANCHO",weight:105,icon:"🐶"},
+  rare:{label:"RARO",weight:45,icon:"💎"}, legendary:{label:"LEGENDARIO",weight:13,icon:"🏆"}, mythical:{label:"MÍTICO",weight:2,icon:"🌌"}
+};
+const EVENT_BANKS = {
+  common:{titles:["Una pausa inesperada","Decisión de oficina","La tarde cambió","Un pendiente pequeño","Momento cotidiano"],situations:["El reporterito encontró tiempo para {activity} en {place}.","Mientras intentaba {activity}, algo llamó su atención: {object}.","El reporterito debía decidir qué hacer con {object} antes de seguir trabajando."],icons:["☕","🧹","📚","🎵","🌤"]},
+  romantic:{titles:["Un asunto del corazón","Mensaje que cambió el día","Ataque de ternura","La Directiva apareció en sus pensamientos","Celos de oficina"],situations:["La Directiva {romance}. El reporterito sintió que el corazón le iba demasiado rápido.","Mientras miraba {object}, el reporterito recordó que la Directiva {romance}.","En {place}, el reporterito quiso responder después de que la Directiva {romance}."],icons:["💗","🌹","💌","📱","🥺"]},
+  pancho:{titles:["Pancho anda sospechoso","Travesura con manchas cafés","Operativo Pancho","Una pista de patitas","Pancho tomó una decisión"],situations:["Pancho {panchoAction} cerca de {place} y ahora mira al reporterito como si nada.","El reporterito descubrió que Pancho {panchoAction} usando {object}.","Pancho quiere atención después de que {panchoAction}."],icons:["🐶","🐾","🦴","🎾","🍔"]},
+  rare:{titles:["Hallazgo improbable","Algo que estaba perdido","Una coincidencia extraña","El cajón secreto","Señal inesperada"],situations:["El reporterito encontró {rareFind} escondido junto a {object}.","En {place} apareció {rareFind} con una nota sin firma.","Un recuerdo olvidado condujo al reporterito hasta {rareFind}."],icons:["💎","🔎","📜","🌹","🗝"]},
+  legendary:{titles:["El día dio un giro legendario","Momento para recordar siempre","La visita imposible","Una historia digna del álbum","El gran día"],situations:["La Directiva apareció de sorpresa en {place} y Pancho comenzó a correr de felicidad.","El reporterito consiguió {legendaryThing} después de recordar todo el apoyo recibido.","Un aniversario imaginario convirtió {object} en un recuerdo legendario."],icons:["🏆","✨","🌠","👑","💞"]},
+  mythical:{titles:["Amor infinito","Pancho CEO","Director Supremo","Abrazo cósmico","La rosa eterna","El día donde todo sale bien","Sueño compartido","La foto perfecta"],situations:["El mundo pixelado se detuvo: {mythicThing} apareció frente al reporterito.","Durante un instante imposible, {mythicThing} conectó todos los recuerdos de esta vida.","Pancho ladró hacia las estrellas cuando {mythicThing} se volvió real."],icons:["🌌","♾️","🌹","🪐","👑"]}
+};
+const EVENT_WORDS = {
+  activities:["tomar café","leer una noticia","ordenar el cuarto","escribir una carta","escuchar música","mirar las estrellas","preparar una hamburguesa","revisar fotografías"],
+  places:["el escritorio","la ventana","la oficina","la cocina pixelada","el rincón de Pancho","el Árbol de Amor","la cama","el archivo de recuerdos"],
+  objects:["una fotografía","una flor","una taza de café","una carta doblada","un juguete de Pancho","una moneda brillante","un recorte de periódico","una hamburguesa sospechosa"],
+  romances:["tardó un poco en responder","subió una selfie muy bonita","dijo ‘te extraño’","dijo ‘te amo’","tuvo un día difícil","quiere una cita","contó un sueño bonito","apareció inesperadamente"],
+  panchoActions:["robó una hamburguesa","escondió una carta","encontró unas monedas","rompió una maceta","trajo una flor","desenterró un regalo","se sentó frente al celular","ladró porque quiere atención"],
+  rareFinds:["una foto olvidada","una carta misteriosa","dinero inesperado","una rosa única","un recuerdo perdido","una llave diminuta"],
+  legendaryThings:["la carta perfecta","un tesoro de Pancho","un viaje imaginario","la oficina de sus sueños","un día perfecto"],
+  mythicThings:["un abrazo cósmico","la rosa eterna","la carta legendaria","un sueño compartido","la foto perfecta","Pancho CEO","el amor infinito"]
+};
+const DECISION_ARCHETYPES = {
+  supportive:{label:"💬 Hablar con honestidad",result:"El reporterito eligió hablar y la relación se volvió un poquito más fuerte.",effects:{love:4,trust:3,motivation:-2},trait:"support"},
+  playful:{label:"😂 Convertirlo en una broma",result:"El reporterito hizo reír a todos, aunque dejó una parte del problema pendiente.",effects:{fun:5,happiness:3,prestige:-2},trait:"humor"},
+  practical:{label:"🧠 Resolverlo con calma",result:"El reporterito encontró una solución razonable, pero terminó algo cansado.",effects:{motivation:4,prestige:3,energy:-3},trait:"courage"},
+  generous:{label:"🎁 Gastar en un detalle",result:"El detalle creó un recuerdo bonito y dejó la cartera un poco más ligera.",effects:{love:5,happiness:3,money:-8},trait:"generosity",memory:true},
+  avoidant:{label:"😎 Fingir que no importa",result:"El reporterito siguió adelante, aunque el corazón guardó una pequeña duda.",effects:{motivation:3,trust:-4,love:-2},trait:"avoidance"},
+  pancho:{label:"🐾 Incluir a Pancho",result:"Pancho movió la cola y convirtió el problema en una aventura.",effects:{pancho:5,fun:3,energy:-2},trait:"panchoCare"},
+  flower:{label:"🌹 Comprar una flor",result:"La flor quedó como recuerdo, pero costó algunas monedas.",effects:{love:6,memories:1,money:-10},trait:"flowers",memory:true},
+  work:{label:"🏢 Concentrarse en el trabajo",result:"El reporterito avanzó profesionalmente y dejó el descanso para después.",effects:{prestige:5,money:7,happiness:-3,energy:-3},trait:"courage"},
+  rest:{label:"😴 Tomarse un descanso",result:"El reporterito recuperó fuerzas, aunque perdió un poco de ritmo.",effects:{energy:6,happiness:2,motivation:-3,prestige:-1},trait:"support"}
+};
 
 const PANCHITO_EVENTS = [
   { id: "beside", text: "Panchito se acostó junto al reporterito.", changes: { energy: 1 } },
@@ -335,6 +433,71 @@ const NOVEL_SCENES = [
   ]}
 ];
 
+const LIFE_MOODS = {
+  happy: { icon:"😊", name:"Feliz", hours:[3,8], messages:["El reporterito amaneció de buenas.","Hoy el reporterito tiene energía extra.","El reporterito no puede dejar de sonreír."], visual:"happy" },
+  inLove: { icon:"❤️", name:"Enamorado", hours:[4,12], messages:["Hoy el reporterito está peligrosamente enamorado.","El reporterito sigue pensando en la Directiva.","El reporterito está viendo fotos otra vez."], visual:"photo" },
+  tired: { icon:"😴", name:"Cansado", hours:[2,6], messages:["El reporterito no durmió tan bien.","Hoy el reporterito anda lento.","El reporterito necesita una siesta."], visual:"sleeping" },
+  sensitive: { icon:"🥺", name:"Sensible", hours:[2,7], messages:["Hoy el reporterito está más sentimental.","El reporterito necesita un poquito más de cariño.","El reporterito se emocionó por cosas pequeñas."], visual:"sad" },
+  thoughtful: { icon:"🤔", name:"Pensativo", hours:[3,9], messages:["El reporterito está reflexionando.","Hoy el reporterito anda muy pensativo.","El reporterito se quedó viendo por la ventana."], visual:"working" },
+  inspired: { icon:"🎵", name:"Inspirado", hours:[4,10], messages:["Hoy el reporterito tiene ideas.","El reporterito despertó inspirado.","El reporterito quiere crear cosas bonitas."], visual:"working" },
+  needsAttention: { icon:"🫂", name:"Necesita atención", hours:[2,5], messages:["Hoy el reporterito quiere pasar tiempo con la Directiva.","El reporterito necesita compañía.","El reporterito está esperando interacción."], visual:"phone" },
+  nostalgic: { icon:"🌧️", name:"Nostálgico", hours:[3,8], messages:["Hoy el reporterito está recordando momentos bonitos.","El reporterito encontró recuerdos.","El reporterito se puso sentimental."], visual:"photo" },
+  confident: { icon:"😎", name:"Presumido", hours:[2,6], messages:["Hoy el reporterito se siente muy guapo.","El reporterito cree que se ve bien en 8 bits.","El reporterito anda con confianza."], visual:"happy" },
+  panchitoMode: { icon:"🐶", name:"Modo Panchito", hours:[2,5], messages:["Panchito y el reporterito están inseparables.","Hoy el reporterito quiere pasar tiempo con Panchito.","Panchito decidió acompañarlo todo el día."], visual:"panchito" }
+};
+
+const HEART_WEATHERS = {
+  beautiful:{icon:"☀️",name:"Día bonito"}, romantic:{icon:"🌸",name:"Día romántico"}, sensitive:{icon:"🌧️",name:"Día sensible"}, special:{icon:"⭐",name:"Día especial"}, calm:{icon:"🌙",name:"Día tranquilo"}
+};
+
+const THOUGHT_OPENINGS = [
+  "El reporterito se pregunta si la Directiva ya comió", "El reporterito está orgulloso de la Directiva", "El reporterito quiere darle un abrazo", "El reporterito cree que Panchito la extraña también", "El reporterito sigue pensando que la Directiva es muy bonita", "El reporterito quiere contarle algo cuando llegue", "El reporterito está feliz porque la Directiva volvió", "El reporterito miró el celular y pensó en ella", "El reporterito encontró una canción que le recuerda a la Directiva", "El reporterito imaginó una cita improvisada", "El reporterito guardó una sonrisa para cuando ella vuelva", "El reporterito espera que la Directiva esté teniendo un día bonito", "El reporterito recordó una conversación importante", "El reporterito quiere presumir a la Directiva otra vez", "El reporterito pensó que su mundo es mejor cuando ella entra"
+];
+const THOUGHT_ENDINGS = [
+  "y sonrió bajito.", "mientras Panchito movía la cola.", "antes de volver a mirar la ventana.", "y lo guardó como pensamiento favorito.", "aunque intentó concentrarse durante tres minutos.", "mientras el Árbol de Amor movía una hojita.", "y sintió calorcito en el corazón pixelado.", "porque algunas cosas bonitas aparecen sin avisar.", "y decidió escribirlo en su memoria interna.", "mientras esperaba una notificación real."
+];
+const REPORTER_THOUGHTS = THOUGHT_OPENINGS.flatMap(opening => THOUGHT_ENDINGS.map(ending => `${opening} ${ending}`));
+
+const LETTER_OPENINGS = [
+  "Hoy Panchito se quedó dormido junto a mí", "El reporterito tuvo un día raro", "El árbol movió una rama cuando pensé en ti", "Encontré una foto que no recordaba", "Hoy el cuarto se sintió demasiado silencioso", "Panchito llevó su pelota hasta el escritorio", "Escuché una canción que parecía hablar de nosotros", "Me senté un rato junto a la ventana", "Guardé uno de tus mensajes en mi memoria", "Hoy intenté ser productivo y casi lo logro"
+];
+const LETTER_ENDINGS = [
+  "y pensé que habría sido bonito que estuvieras aquí.", "pero recordar algo bonito de la Directiva arregló un poquito el día.", "y confirmé que sigo guardando cada palabra bonita que recibo.", "mientras imaginaba el próximo abrazo pendiente.", "y quise agradecer que este pequeño mundo también sea tuyo."
+];
+const SPONTANEOUS_LETTERS = LETTER_OPENINGS.flatMap(opening => LETTER_ENDINGS.map(ending => `${opening} ${ending}`));
+
+const DREAM_PLACES = ["caminaba con la Directiva","Panchito perseguía estrellas","el Árbol estaba lleno de corazones","la Directiva visitaba el jardín","el cuarto flotaba entre nubes rosas","encontraban una cafetería diminuta","todos los regalos empezaban a brillar","la luna entraba por la ventana"];
+const DREAM_ENDINGS = ["y nadie tenía prisa.","mientras sonaba una canción bonita.","y Panchito cuidaba el camino.","antes de despertar con una sonrisa.","y el corazón pixelado se sentía en casa."];
+const REPORTER_DREAMS = DREAM_PLACES.flatMap(place => DREAM_ENDINGS.map(ending => `El reporterito soñó que ${place} ${ending}`));
+
+const SCENE_OPTION_SETS = [
+  [["Escucharlo","El reporterito se sintió acompañado.",{trust:2,attention:2}],["Dar piojito","El reporterito activó modo paz absoluta.",{affection:2,energy:1}],["Mandar mensaje bonito","El reporterito sonrió al leerlo.",{messages:2,affection:1}]],
+  [["Sentarse con él","El reporterito agradeció la compañía silenciosa.",{attention:3}],["Dar abrazo","El reporterito respiró dentro del abrazo.",{hugs:3}],["Preguntar cómo está","El reporterito sintió que importaba.",{trust:2,attention:1}]],
+  [["Dejarlo descansar","El reporterito cerró los ojos unos minutos.",{energy:3}],["Llevarle agua","El reporterito prometió cuidarse mejor.",{energy:2,trust:1}],["Compartir el momento","El reporterito dejó de sentirse solo.",{affection:1,attention:2}]],
+  [["Jugar con Panchito","Panchito provocó una sonrisa de emergencia.",{energy:2,affection:1}],["Acariciar a Panchito","El reporterito y Panchito entraron en calma.",{trust:2}],["Tomar una foto","El momento quedó guardado para siempre.",{affection:2},null,true]],
+  [["Hablar con calma","El reporterito recuperó seguridad.",{trust:3}],["Decir algo bonito","El reporterito recibió cariño directo al corazón.",{affection:3}],["Quedarse un ratito","El reporterito recuperó atención emocional.",{attention:3}]],
+  [["Mirar el recuerdo","El reporterito sonrió recordando aquel momento.",{affection:2,trust:1}],["Guardarlo en el diario","El sistema protegió el recuerdo.",{attention:2},null,true],["Contarle a Panchito","Panchito escuchó el informe completo.",{energy:1,trust:1}]]
+];
+
+function createScene(id, category, icon, title, text, visual, optionIndex, extra = {}) {
+  return { id, category, icon, title, text, visual, options: SCENE_OPTION_SETS[optionIndex % SCENE_OPTION_SETS.length], ...extra };
+}
+
+const TIME_SCENE_SEEDS = {
+  morning:["Primer bostezo","Buscando el celular","Panchito quiere jugar","Luz en la ventana","La planta tiene sed","Desayuno pendiente","Una canción mañanera","Cama sin tender","El primer mensaje","Una idea temprana","Panchito trae energía","El cuarto despierta"],
+  afternoon:["Mucho trabajo","Distracción romántica","Siesta de Panchito","Celular entre tareas","Hambre de reportero","Pausa necesaria","Escritorio desordenado","Una nota pendiente","La planta observa","Tarde productiva","Ventana luminosa","Cinco minutos de descanso"],
+  night:["Modo extrañar","Canciones románticas","La foto en el marco","Panchito se acerca","Charla antes de dormir","Luz cálida","Un mensaje pendiente","La cena imaginaria","El árbol al anochecer","Recuerdos en la cama","Silencio acompañado","Una estrella visible"],
+  late:["Sueño pixelado","Soñando con abrazos","Panchito junto a la cama","Luna en el cuarto","El árbol brilla","Una vuelta en sueños","La ventana estrellada","Todo está tranquilo"]
+};
+const TIME_SCENE_TEXTS = {
+  morning:"El reporterito está empezando el día y parece necesitar un pequeño gesto de compañía.", afternoon:"El reporterito hizo una pausa entre tareas; su mundo sigue moviéndose aunque intente concentrarse.", night:"El cuarto se volvió cálido y el reporterito está pensando un poquito más en la Directiva.", late:"El mundo está en silencio; Panchito y el reporterito comparten una madrugada tranquila."
+};
+const TIME_WORLD_SCENES = Object.entries(TIME_SCENE_SEEDS).flatMap(([period,titles]) => titles.map((title,index) => createScene(`${period}-${index}`,period,period==="late"?"🌙":period==="morning"?"☀️":period==="afternoon"?"▣":"♥",title,TIME_SCENE_TEXTS[period],period==="late"?"sleeping":period==="night"?"photo":"working",index)));
+const MOOD_WORLD_SCENES = Object.entries(LIFE_MOODS).map(([mood,data],index) => createScene(`mood-${mood}`,"mood",data.icon,`${data.name} por unas horas`,data.messages[index % data.messages.length],data.visual,index,{mood}));
+const PANCHITO_WORLD_SCENES = ["Panchito trae una carta","Panchito busca compañía","Panchito encontró una foto","Panchito detectó tristeza","La hamburguesa desapareció","Panchito quiere jugar","Guardia frente al celular","Un ladrido importante","Panchito encontró una estrella","Misión: hacer sonreír"].map((title,index)=>createScene(`dog-scene-${index}`,"panchito","🐶",title,`Panchito inició una pequeña aventura dentro del cuarto: ${title.toLowerCase()}.`,`panchito`,index,{panchito:true}));
+const GIFT_WORLD_SCENES = GIFT_DEFINITIONS.slice(0,10).map((gift,index)=>createScene(`gift-scene-${gift.id}`,"gift",gift.icon,`${gift.name} en el cuarto`,`El reporterito encontró ${gift.name.toLowerCase()} y recordó cómo llegó a su mundo.`,`gift`,index,{requiresGift:gift.id}));
+const WORLD_SCENES = [...TIME_WORLD_SCENES,...MOOD_WORLD_SCENES,...PANCHITO_WORLD_SCENES,...GIFT_WORLD_SCENES];
+
 /* Estas utilidades deben existir antes de cargar la partida guardada. */
 const $ = (selector) => document.querySelector(selector);
 const randomFrom = (array) => array[Math.floor(Math.random() * array.length)];
@@ -342,7 +505,7 @@ const clamp = (number) => Math.max(0, Math.min(100, Math.round(number)));
 const cloneDefaultState = () => JSON.parse(JSON.stringify(DEFAULT_STATE));
 
 let offlinePenaltyNotice = false;
-let state = loadState();
+let state = loadGame();
 let loveTreeXP = Number(state.tree.loveTreeXP) || 0;
 let loveTreeLevel = calculateTreeLevel(loveTreeXP);
 let currentMood = "tranquilo";
@@ -356,23 +519,49 @@ const actionCooldowns = {};
 const panchitoCooldowns = {};
 let currentNovel = null;
 let novelResolved = false;
+let currentWorldScene = null;
+let resetArmed = false;
+let hardResetInProgress = false;
+let currentDirectivaInteraction = null;
 
-const average = () => Object.values(state.stats).reduce((a, b) => a + b, 0) / 5;
+const average = () => Object.values(state.stats).reduce((a, b) => a + b, 0) / Object.values(state.stats).length;
 
-function calculateOfflineLoss(lastSaved, now) {
-  const totals = { hugs: 0, affection: 0, messages: 0, energy: 0, trust: 0, attention: 0 };
-  const awakeLoss = { messages: 10, hugs: 8, attention: 8, affection: 7, energy: 7, trust: 5 };
-  const sleepLoss = { messages: 6, hugs: 6, attention: 6, affection: 6, energy: 6, trust: 6 };
-  const maxLoss = 55;
-  const totalHours = Math.floor((now - lastSaved) / 3600000);
-  for (let i = 1; i <= totalHours; i++) {
-    const hour = new Date(lastSaved + i * 3600000).getHours();
-    const sleeping = hour >= 0 && hour < 8;
-    const table = sleeping ? sleepLoss : awakeLoss;
-    Object.keys(totals).forEach(key => totals[key] += table[key] || 0);
+function calculateOfflineDecay(lastSaved, now = Date.now()) {
+  const elapsed = Math.max(0, now - (Number(lastSaved) || now));
+  if (!elapsed) return { loss: 0, sleptMs: 0, awakeMs: 0 };
+  const step = 20 * 60 * 1000;
+  let cursor = Number(lastSaved) || now;
+  let loss = 0, sleptMs = 0, awakeMs = 0;
+  while (cursor < now) {
+    const next = Math.min(now, cursor + step);
+    const hours = (next - cursor) / 3600000;
+    if (isReporterSleepingNow(new Date(cursor))) {
+      loss += 6 * hours;
+      sleptMs += next - cursor;
+    } else {
+      loss += 5 * ((next - cursor) / step);
+      awakeMs += next - cursor;
+    }
+    cursor = next;
   }
-  Object.keys(totals).forEach(key => totals[key] = Math.min(maxLoss, totals[key]));
-  return totals;
+  return { loss: Math.min(100, loss), sleptMs, awakeMs };
+}
+
+function applyOfflineDecayToMergedState(merged, lastSaved) {
+  const { loss, sleptMs, awakeMs } = calculateOfflineDecay(lastSaved);
+  if (!loss || merged.life.isDead) return false;
+  Object.keys(merged.stats).forEach(key => merged.stats[key] = Math.max(0, Number(merged.stats[key] || 0) - loss));
+  ["hunger", "happiness", "motivation", "fun", "prestige"].forEach(key => {
+    if (typeof merged.simulation[key] === "number") merged.simulation[key] = Math.max(0, merged.simulation[key] - loss);
+  });
+  ["hunger", "energy", "happiness", "friendship"].forEach(key => {
+    if (typeof merged.panchito[key] === "number") merged.panchito[key] = Math.max(0, merged.panchito[key] - loss);
+  });
+  merged.life.lastOfflineHours = Math.round(((sleptMs + awakeMs) / 3600000) * 10) / 10;
+  merged.life.totalOfflinePenalty = (Number(merged.life.totalOfflinePenalty) || 0) + loss;
+  merged.life.lastOfflineSleepHours = Math.round((sleptMs / 3600000) * 10) / 10;
+  merged.life.lastOfflineAwakeMinutes = Math.round(awakeMs / 60000);
+  return true;
 }
 
 function loadState() {
@@ -392,8 +581,15 @@ function loadState() {
       album: { ...DEFAULT_STATE.album, ...(saved.album || {}) },
       world: { ...DEFAULT_STATE.world, ...(saved.world || {}) },
       panchito: { ...DEFAULT_STATE.panchito, ...(saved.panchito || {}) },
+      directiva: { ...DEFAULT_STATE.directiva, ...(saved.directiva || {}), stats:{...DEFAULT_STATE.directiva.stats,...(saved.directiva?.stats || {})} },
       gifts: { ...DEFAULT_STATE.gifts, ...(saved.gifts || {}) },
-      novel: { ...DEFAULT_STATE.novel, ...(saved.novel || {}) }
+      novel: { ...DEFAULT_STATE.novel, ...(saved.novel || {}) },
+      economy: { ...DEFAULT_STATE.economy, ...(saved.economy || {}) },
+      simulation: { ...DEFAULT_STATE.simulation, ...(saved.simulation || {}) },
+      eventEngine: { ...DEFAULT_STATE.eventEngine, ...(saved.eventEngine || {}), traits:{...DEFAULT_STATE.eventEngine.traits,...(saved.eventEngine?.traits || {})} },
+      minigames: { ...DEFAULT_STATE.minigames, ...(saved.minigames || {}) },
+      timeline: Array.isArray(saved.timeline) ? saved.timeline : [],
+      life: { ...DEFAULT_STATE.life, ...(saved.life || {}) }
     };
     merged.tree.memories = Array.isArray(merged.tree.memories) ? merged.tree.memories : [];
     merged.album.memories = Array.isArray(merged.album.memories) ? merged.album.memories : [];
@@ -404,19 +600,27 @@ function loadState() {
     merged.novel.completed = Array.isArray(merged.novel.completed) ? merged.novel.completed : [];
     merged.novel.choices = Array.isArray(merged.novel.choices) ? merged.novel.choices : [];
     merged.novel.history = Array.isArray(merged.novel.history) ? merged.novel.history : [];
-    if (merged.stats.attention === undefined) merged.stats.attention = 65;
-    if (hoursAway >= 1) {
-      const offlineLoss = calculateOfflineLoss(saved.lastSaved || Date.now(), Date.now());
-      Object.entries(offlineLoss).forEach(([key, loss]) => {
-        if (merged.stats[key] !== undefined) merged.stats[key] = clamp(merged.stats[key] - loss);
-      });
-      offlinePenaltyNotice = true;
-    }
+    merged.economy.unlockedOutfits = Array.isArray(merged.economy.unlockedOutfits) ? merged.economy.unlockedOutfits : ["classic"];
+    if (!merged.economy.unlockedOutfits.includes("classic")) merged.economy.unlockedOutfits.unshift("classic");
+    merged.economy.awardedLevels = Array.isArray(merged.economy.awardedLevels) ? merged.economy.awardedLevels : [1];
+    merged.economy.ownedItems = Array.isArray(merged.economy.ownedItems) ? merged.economy.ownedItems : [];
+    ["history","decisions","seenIds","unlockedMythics"].forEach(key => merged.eventEngine[key] = Array.isArray(merged.eventEngine[key]) ? merged.eventEngine[key] : []);
+    merged.eventEngine.rarityCounts = merged.eventEngine.rarityCounts && typeof merged.eventEngine.rarityCounts === "object" ? merged.eventEngine.rarityCounts : {};
+    merged.minigames.bestScores = merged.minigames.bestScores && typeof merged.minigames.bestScores === "object" ? merged.minigames.bestScores : {};
+    ["recentThoughts", "recentScenes", "scenesSeen", "sceneChoices", "letters", "dreams", "visitDates", "journal"].forEach(key => {
+      merged.life[key] = Array.isArray(merged.life[key]) ? merged.life[key] : [];
+    });
+    merged.life.firstMemories = merged.life.firstMemories && typeof merged.life.firstMemories === "object" ? merged.life.firstMemories : {};
+    merged.life.lastImportant = merged.life.lastImportant && typeof merged.life.lastImportant === "object" ? merged.life.lastImportant : {};
+    if (applyOfflineDecayToMergedState(merged, saved.lastSaved || Date.now())) offlinePenaltyNotice = true;
     return merged;
   } catch { return cloneDefaultState(); }
 }
 
+function loadGame() { return loadState(); }
+
 function saveState() {
+  if (hardResetInProgress) return;
   state.lastSaved = Date.now();
   state.tree.loveTreeXP = loveTreeXP;
   state.tree.loveTreeLevel = loveTreeLevel;
@@ -425,6 +629,8 @@ function saveState() {
   try { localStorage.setItem(STORAGE_KEY, serializedState); } catch { /* Se conserva el respaldo de la pestaña. */ }
   window.name = WINDOW_SAVE_PREFIX + serializedState;
 }
+
+function saveGame() { saveState(); }
 
 function buildInterface() {
   $("#statusPanel").innerHTML = Object.entries(STAT_INFO).map(([key, info]) => `
@@ -437,11 +643,20 @@ function buildInterface() {
       <span class="achievement-icon">${info[0]}</span><div><strong>${info[1]}</strong><small>${info[2]}</small></div>
     </div>`).join("");
   createSky();
+  if (state.life.isDead) {
+    loveTreeXP = 0; loveTreeLevel = 1; updateWorldTime(false); applyRoomTheme("romantic");
+    renderLoveTree(); renderGifts(); renderOutfitShop(); applyEquippedOutfit(); renderAlbum(); renderDiary(); renderPanchito(); initializeDirectiva(); renderNovelProgress(); buildChatInterface(); renderReporterLife(); renderLifeStore(); renderTimeline(); renderOffice(); render(true);
+    return;
+  }
   initializeAlbum();
   initializeLoveTree();
   initializeWorld();
+  initializeDirectiva();
+  initializeLife();
   initializeGifts();
+  initializeOutfitShop();
   initializePanchito();
+  initializeReporterLife();
   renderNovelProgress();
   buildChatInterface();
   checkChatAchievements();
@@ -493,6 +708,7 @@ function celebrateTreeLevel(level) {
   scene.classList.remove("growing"); void scene.offsetWidth; scene.classList.add("growing");
   setTimeout(() => scene.classList.remove("growing"), 1200);
   createTreeParticles(22);
+  awardLevelCoins(level);
   if (level === 4) grantGift("star", "ÁRBOL DE AMOR");
 }
 
@@ -568,6 +784,7 @@ function addAlbumMemory(text, type = "RECUERDO", icon = "♥", id = null) {
   state.album.memories.push({ id: id || `memory-${Date.now()}-${Math.random()}`, text, type, icon, createdAt: Date.now() });
   state.album.memories = state.album.memories.slice(-60);
   if ($("#memoryAlbum")) renderAlbum();
+  if (state.life) addJournalEntry(text, type, icon, id ? `album-${id}` : null);
 }
 
 function renderAlbum() {
@@ -589,10 +806,26 @@ function escapeHTML(value) {
 }
 
 /* Mundo, habitación y ciclo horario */
+function isSleepHour(hour = new Date().getHours()) {
+  return hour >= 0 && hour < 8;
+}
+
+function isReporterSleepingNow(date = new Date()) {
+  return isSleepHour(date.getHours());
+}
+
+function sleepBlockedMessage() {
+  const text = "El reporterito está durmiendo de 12:00 a.m. a 8:00 a.m. 😴 Zzz... No puede hacer acciones, responder mensajes ni abrir escenas hasta que despierte.";
+  setMessage(text);
+  toast("😴", "REPORTERITO DORMIDO", "Vuelve después de las 8:00 a.m. para cuidarlo.");
+  showLifeEventAlert(false);
+  return text;
+}
+
 function getTimePeriod(hour = new Date().getHours()) {
-  if (hour >= 6 && hour < 12) return "morning";
+  if (hour >= 8 && hour < 12) return "morning";
   if (hour >= 12 && hour < 19) return "afternoon";
-  if (hour >= 19 && hour < 23) return "night";
+  if (hour >= 19 && hour < 24) return "night";
   return "late";
 }
 
@@ -600,7 +833,7 @@ const TIME_PERIOD_INFO = {
   morning: ["☀", "MAÑANA", "El reporterito acaba de despertar."],
   afternoon: ["▣", "TARDE", "El reporterito anda trabajando."],
   night: ["♥", "NOCHE", "El reporterito está extrañando a la Directiva."],
-  late: ["☾", "MADRUGADA", "El reporterito está dormido."]
+  late: ["☾", "DORMIDO", "El reporterito está durmiendo. Zzz..."]
 };
 
 function initializeWorld() {
@@ -610,7 +843,7 @@ function initializeWorld() {
   const today = localDateKey();
   if (state.world.lastDailyGift !== today) {
     state.world.lastDailyGift = today;
-    setTimeout(() => grantNextGift("VISITA DIARIA"), 900);
+    setTimeout(() => { if (!state.life.isDead) grantNextGift("VISITA DIARIA"); }, 900);
   }
 }
 
@@ -626,35 +859,305 @@ function updateWorldTime(announce = true) {
   const previous = state.world.timePeriod;
   const period = getTimePeriod();
   state.world.timePeriod = period;
+  if (period === "late") showLifeEventAlert(false);
   $("#roomScene").dataset.time = period;
   $("#roomPeriodIcon").textContent = TIME_PERIOD_INFO[period][0];
   $("#roomPeriodName").textContent = TIME_PERIOD_INFO[period][1];
   if (announce && previous !== period) {
     setMessage(TIME_PERIOD_INFO[period][2]);
     toast(TIME_PERIOD_INFO[period][0], TIME_PERIOD_INFO[period][1], TIME_PERIOD_INFO[period][2]);
+    handleDreamCycle();
     saveState();
   }
 }
 
+/* Vida y personalidad persistente */
+function initializeLife() {
+  checkReporterLife(); updateLifeMood(); updateHeartWeather(); registerDailyVisit(); handleDreamCycle(); renderDiary(); renderLifeStatus();
+  if (isReporterSleepingNow() && !state.life.isDead) setTimeout(() => sleepBlockedMessage(), 700);
+  checkLifeAchievements();
+  setTimeout(() => showRandomThought(true), 1400);
+  if (state.life.pendingScene) {
+    const pending = WORLD_SCENES.find(scene => scene.id === state.life.pendingScene);
+    if (pending) setTimeout(() => openWorldScene(pending), 2400);
+  }
+}
+
+function updateLifeMood(force = false) {
+  if (!force && LIFE_MOODS[state.life.mood] && Date.now() < Number(state.life.moodExpiresAt || 0)) return;
+  let choices = Object.keys(LIFE_MOODS);
+  if (state.stats.energy < 30) choices = ["tired","sensitive","needsAttention"];
+  else if (state.stats.attention < 30) choices = ["needsAttention","sensitive","nostalgic"];
+  else if (state.stats.affection > 80) choices = ["inLove","happy","confident"];
+  state.life.mood = randomFrom(choices);
+  const config = LIFE_MOODS[state.life.mood];
+  const hours = config.hours[0] + Math.floor(Math.random() * (config.hours[1] - config.hours[0] + 1));
+  state.life.moodExpiresAt = Date.now() + hours * 3600000;
+  addJournalEntry(`Estado de ánimo: ${config.name}. ${randomFrom(config.messages)}`, "ESTADO DE ÁNIMO", config.icon, `mood-${localDateKey()}-${state.life.mood}`);
+}
+
+function updateHeartWeather() {
+  const today = localDateKey();
+  if (state.life.weatherDate !== today || !HEART_WEATHERS[state.life.weather]) {
+    let options = ["beautiful","romantic","calm","special","sensitive"];
+    if (["sensitive","nostalgic","tired"].includes(state.life.mood)) options = ["sensitive","calm","beautiful"];
+    if (["inLove","happy"].includes(state.life.mood)) options = ["romantic","beautiful","special"];
+    state.life.weather = randomFrom(options); state.life.weatherDate = today;
+  }
+}
+
+function renderLifeStatus() {
+  const mood = LIFE_MOODS[state.life.mood] || LIFE_MOODS.happy;
+  const weather = HEART_WEATHERS[state.life.weather] || HEART_WEATHERS.beautiful;
+  $("#lifeMoodIcon").textContent = mood.icon; $("#lifeMoodName").textContent = mood.name.toUpperCase();
+  $("#heartWeatherIcon").textContent = weather.icon; $("#heartWeatherName").textContent = weather.name.toUpperCase();
+  $("#roomScene").dataset.heartWeather = state.life.weather;
+  document.body.dataset.lifeMood = state.life.mood;
+}
+
+function registerDailyVisit() {
+  const today = localDateKey();
+  const isNewDay = !state.life.visitDates.includes(today);
+  state.life.lastVisitAt = Date.now();
+  if (!isNewDay) return;
+  state.life.visitDates.push(today); state.life.visitDates = state.life.visitDates.slice(-365);
+  state.life.dailyVisits = state.life.visitDates.length;
+  if (!state.life.isDead) changeStats({ attention: 2, energy: 1 });
+  const welcomes = ["El reporterito notó que la Directiva volvió.","El reporterito estuvo esperando esta visita.","Panchito movió la colita al verla llegar."];
+  const welcome = randomFrom(welcomes);
+  addJournalEntry(`Día ${getGameDay()}: ${welcome}`, "VISITA DIARIA", "🚪", `visit-${today}`);
+  addTimeline("🚪",welcome,"NUEVO DÍA",`timeline-visit-${today}`);
+  rememberFirst("firstVisit", "El reporterito recordó la primera vez que la Directiva entró a su mundo.");
+  setTimeout(() => { setMessage(welcome); toast("🚪","VISITA DIARIA",welcome); }, 700);
+  unlock("firstWorldVisit");
+}
+
+function getGameDay() { return Math.max(1, Math.floor((Date.now() - state.startedAt) / 86400000) + 1); }
+
+function showRandomThought(announce = false) {
+  const memoryThoughts = Object.values(state.life.firstMemories).map(text => `El reporterito recordó algo importante: ${text.toLowerCase()}`);
+  const weatherThoughts = {
+    beautiful:"El reporterito sintió que hoy puede ser un día bonito.", romantic:"El clima del corazón hizo que el reporterito pensara todavía más en la Directiva.", sensitive:"El reporterito está tratando sus recuerdos con un poquito más de cuidado hoy.", special:"El reporterito sospecha que algo especial puede pasar en su mundo.", calm:"El reporterito disfruta el silencio tranquilo del cuarto."
+  };
+  const traitThoughts = {support:"El reporterito recordó que hablar con honestidad suele hacerlo sentir acompañado.",avoidance:"El reporterito se preguntó si ha estado evitando demasiadas conversaciones difíciles.",flowers:"El reporterito volvió a pensar que algunas flores pueden guardar historias completas.",generosity:"El reporterito pensó en preparar otro detalle bonito.",courage:"El reporterito se siente capaz de enfrentar un día difícil.",humor:"El reporterito está ensayando un chiste malo para la Directiva.",panchoCare:"El reporterito cree que Pancho entiende más de emociones de lo que aparenta."};
+  const lastDecision = state.eventEngine.decisions.at(-1);
+  const decisionThought = lastDecision ? `El reporterito sigue pensando en aquella vez que eligió “${lastDecision.choice}”.` : null;
+  const pool = [...REPORTER_THOUGHTS, ...memoryThoughts, weatherThoughts[state.life.weather], traitThoughts[dominantTrait()], decisionThought].filter(Boolean);
+  const available = pool.filter(thought => !state.life.recentThoughts.includes(thought));
+  const thought = randomFrom(available.length ? available : pool);
+  state.life.recentThoughts.push(thought); state.life.recentThoughts = state.life.recentThoughts.slice(-14);
+  $("#dailyThought").textContent = thought; $("#diaryDate").textContent = new Date().toLocaleDateString("es-MX", { weekday:"long", day:"numeric", month:"long" }).toUpperCase();
+  if (announce) setMessage(thought);
+  saveState(); return thought;
+}
+
+function maybeShowSpontaneousLetter() {
+  if (state.life.isDead || isReporterSleepingNow() || document.visibilityState === "hidden" || anyModalOpen() || Math.random() > .22) return;
+  const recent = state.life.letters.slice(-12).map(item => item.text);
+  const available = SPONTANEOUS_LETTERS.filter(letter => !recent.includes(letter));
+  let text = randomFrom(available.length ? available : SPONTANEOUS_LETTERS);
+  const lastDecision = state.eventEngine.decisions.at(-1);
+  if (lastDecision && Math.random() < .35) text += ` Todavía sigo pensando en cuando elegí ${lastDecision.choice.toLowerCase()}; creo que esa decisión cambió un poquito quién soy.`;
+  const letter = { text, at:Date.now() };
+  state.life.letters.push(letter); state.life.letters = state.life.letters.slice(-50);
+  addJournalEntry(text, "CARTA ESPONTÁNEA", "💌");
+  showLetter("Carta espontánea del Reporterito", text); saveState();
+}
+
+function handleDreamCycle() {
+  const today = localDateKey(), period = getTimePeriod();
+  if (period === "late" && state.life.lastDreamDate !== today) {
+    let text = randomFrom(REPORTER_DREAMS.filter(dream => !state.life.dreams.slice(-10).some(item => item.text === dream)));
+    if (state.eventEngine.decisions.length && Math.random() < .45) text += ` En el sueño reapareció una decisión del día ${state.eventEngine.decisions.at(-1).day}.`;
+    state.life.dreams.push({ text, at:Date.now() }); state.life.dreams = state.life.dreams.slice(-40);
+    state.life.lastDreamDate = today; addJournalEntry(text, "SUEÑO", "🌙", `dream-${today}`);
+    if (state.life.dreams.length === 1) addAlbumMemory(text,"PRIMER SUEÑO","🌙","first-dream");
+  }
+  if (period === "morning" && state.life.dreams.length && state.life.dreamShownDate !== today) {
+    state.life.dreamShownDate = today;
+    setTimeout(() => { setMessage("El reporterito abrió los ojos, se estiró y recordó un sueño bonito."); toast("🌙","SUEÑO GUARDADO",state.life.dreams.at(-1).text); describeLatestDream(); }, 1800);
+  }
+}
+
+function addJournalEntry(text, type = "RECUERDO", icon = "♥", id = null) {
+  if (!state.life) return;
+  if (id && state.life.journal.some(entry => entry.id === id)) return;
+  state.life.journal.push({ id:id || `journal-${Date.now()}-${Math.random()}`, text, type, icon, at:Date.now(), day:getGameDay() });
+  state.life.journal = state.life.journal.slice(-220);
+  if ($("#diaryEntries")) renderDiary();
+  checkLifeAchievements();
+}
+
+function renderDiary() {
+  if (!$("#diaryEntries")) return;
+  $("#diaryCount").textContent = state.life.journal.length;
+  const entries = state.life.journal.slice(-70).reverse();
+  $("#diaryEntries").innerHTML = entries.length ? entries.map(entry => `<article class="diary-entry"><span>${escapeHTML(entry.icon)}</span><b>DÍA ${entry.day} · ${escapeHTML(entry.type)}</b><p>${escapeHTML(entry.text)}</p><time>${new Date(entry.at).toLocaleString("es-MX",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}</time></article>`).join("") : '<p class="diary-empty">El diario está abierto en la primera página.<br>El mundo pronto tendrá algo que contar.</p>';
+}
+
+function rememberFirst(key, text) {
+  if (state.life.firstMemories[key]) return;
+  state.life.firstMemories[key] = text;
+  addJournalEntry(text, "PRIMERA VEZ", "✦", `first-${key}`);
+}
+
+function anyModalOpen() { return Boolean(document.querySelector(".modal-backdrop:not(.hidden)")); }
+
+function lowStatScene() {
+  const lowest = Object.entries(state.stats).sort((a,b) => a[1]-b[1])[0];
+  if (!lowest || lowest[1] >= 32) return null;
+  const info = {
+    affection:["Cariño bajito","El reporterito está abrazando una almohada.",0,"♥"], messages:["Otra notificación fantasma","El reporterito revisó el celular otra vez.",0,"📱"], attention:["Necesita compañía","El reporterito se siente un poquito ignorado.",1,"🫂"], energy:["Día pesado","El reporterito parece agotado.",2,"⚡"], trust:["Un lugar seguro","El reporterito necesita sentirse seguro.",4,"🔐"], hugs:["Abrazo urgente","El reporterito necesita un abrazo urgente.",1,"🫂"]
+  }[lowest[0]];
+  return createScene(`low-${lowest[0]}`,"low",info[3],info[0],info[1],lowest[0]==="messages"?"phone":lowest[0]==="energy"?"sleeping":"sad",info[2]);
+}
+
+function contextualScenePool() {
+  const period = getTimePeriod();
+  const pool = WORLD_SCENES.filter(scene => scene.category === period);
+  const moodScene = WORLD_SCENES.find(scene => scene.mood === state.life.mood); if (moodScene) pool.push(moodScene,moodScene);
+  const weatherMood = { romantic:"inLove", sensitive:"nostalgic", calm:"thoughtful", special:"inspired", beautiful:"happy" }[state.life.weather];
+  const weatherScene = WORLD_SCENES.find(scene => scene.mood === weatherMood); if (weatherScene) pool.push(weatherScene);
+  const low = lowStatScene(); if (low) pool.push(low,low,low);
+  if (state.life.mood === "panchitoMode" || Math.random() < .3) pool.push(...PANCHITO_WORLD_SCENES);
+  pool.push(...GIFT_WORLD_SCENES.filter(scene => state.gifts.owned.includes(scene.requiresGift)));
+  return pool;
+}
+
+function showContextualWorldScene() {
+  if (state.life.isDead || isReporterSleepingNow() || document.visibilityState === "hidden" || anyModalOpen()) return;
+  if (Math.random() < .12) { startNovelScene(); return; }
+  const pool = contextualScenePool();
+  const available = pool.filter(scene => !state.life.recentScenes.includes(scene.id));
+  openWorldScene(randomFrom(available.length ? available : pool));
+}
+
+function openWorldScene(scene) {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (!scene) return;
+  currentWorldScene = scene; state.life.pendingScene = scene.id;
+  $("#worldSceneIcon").textContent = scene.icon; $("#worldSceneCategory").textContent = scene.category.toUpperCase();
+  $("#worldSceneTitle").textContent = scene.title; $("#worldSceneText").textContent = scene.text; $("#worldSceneEffect").textContent = scene.icon;
+  $("#worldSceneOptions").innerHTML = scene.options.map((option,index) => `<button data-world-scene-choice="${index}">${option[0]}</button>`).join("");
+  forceReporterVisual(scene.visual); openModal("worldSceneModal"); saveState();
+}
+
+function forceReporterVisual(visual) {
+  const pet = $("#pet"), states = ["happy","sad","critical","sleeping","phone","photo","working","idle","read","dj","music","game","pancho","coffee","gift","stars","clean"];
+  states.forEach(name => pet.classList.remove(`room-state-${name}`));
+  pet.classList.add(`room-state-${LIFE_MOODS[state.life.mood]?.visual === "panchito" ? "happy" : visual || "idle"}`);
+}
+
+function resolveWorldScene(index) {
+  if (state.life.isDead) return;
+  if (!currentWorldScene) return;
+  const option = currentWorldScene.options[index]; if (!option) return;
+  changeStats(option[2]); addTreeXP(currentWorldScene.category === "mood" ? 2 : 1);
+  if (!state.life.scenesSeen.includes(currentWorldScene.id)) state.life.scenesSeen.push(currentWorldScene.id);
+  state.life.recentScenes.push(currentWorldScene.id); state.life.recentScenes = state.life.recentScenes.slice(-12);
+  state.life.sceneChoices.push({ sceneId:currentWorldScene.id, choice:option[0], result:option[1], at:Date.now() }); state.life.sceneChoices = state.life.sceneChoices.slice(-150);
+  if (option[4]) addAlbumMemory(option[1], "ESCENA DEL MUNDO", currentWorldScene.icon, `world-scene-${currentWorldScene.id}`);
+  if (currentWorldScene.panchito) state.panchito.eventsSeen.push(`scene-${currentWorldScene.id}`);
+  if (currentWorldScene.category === "gift" && Math.random() < .2) grantNextGift("ESCENA DE RECUERDO");
+  addJournalEntry(option[1], `ESCENA · ${currentWorldScene.title}`, currentWorldScene.icon);
+  setMessage(option[1]); closeModal("worldSceneModal"); state.life.pendingScene = null; currentWorldScene = null;
+  checkLifeAchievements(); render(); saveState();
+}
+
+function checkLifeAchievements() {
+  if (!state.life) return;
+  if (state.life.visitDates.length >= 7) unlock("constantDirector");
+  if (state.life.journal.length >= 50) unlock("fullDiary");
+  if (state.gifts?.owned?.length >= 15) unlock("romanticCollector");
+  if (state.world?.roomInteractions >= 5) unlock("livingRoom");
+  if (getTimePeriod() === "late" && state.life.dailyVisits > 0) unlock("starryNight");
+  if (getTimePeriod() === "morning" && state.life.dailyVisits > 0) unlock("prettyMorning");
+  if (loveTreeLevel >= 3 && state.gifts?.owned?.length >= 5 && state.life.scenesSeen.length >= 10) unlock("growingWorld");
+}
+
+function resetGame() {
+  hardResetInProgress = true;
+  try { localStorage.removeItem(STORAGE_KEY); } catch { /* El respaldo también se limpia. */ }
+  try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* Sin sessionStorage. */ }
+  window.name = "";
+  state = cloneDefaultState();
+  state.startedAt = Date.now(); state.lastSaved = Date.now();
+  loveTreeXP = 0; loveTreeLevel = 1; currentMood = "tranquilo";
+  setTimeout(() => location.replace(`${location.pathname}?nuevo=${Date.now()}`), 40);
+}
+
+function getVitality() { return Math.max(0, Math.round((state.stats.affection + state.simulation.hunger + state.stats.energy + state.simulation.happiness) / 4)); }
+function getAliveDays() { return state.life.isDead ? 0 : Math.max(1, Math.floor((Date.now() - Number(state.life.aliveSince || Date.now())) / 86400000) + 1); }
+
+function checkReporterLife() {
+  if (state.life.isDead) { renderLifeCounter(); return; }
+  const now = Date.now();
+  if (state.simulation.hunger <= 0) state.simulation.hungerZeroSince ||= now; else state.simulation.hungerZeroSince = 0;
+  const extremeSadness = state.simulation.happiness <= 1 && state.stats.affection < 10;
+  if (extremeSadness) state.simulation.extremeSince ||= now; else state.simulation.extremeSince = 0;
+  let cause = "";
+  if (state.stats.affection <= 0) cause = "El amor llegó a cero.";
+  else if (state.simulation.hungerZeroSince && now - state.simulation.hungerZeroSince >= 15 * 60 * 1000) cause = "El hambre permaneció en cero demasiado tiempo.";
+  else if (state.simulation.extremeSince && now - state.simulation.extremeSince >= 15 * 60 * 1000) cause = "La tristeza extrema duró demasiado tiempo.";
+  if (!cause) { renderLifeCounter(); return; }
+  const deathAt = Date.now();
+  const lastAliveDays = Math.max(1, Math.floor((deathAt - Number(state.life.aliveSince || state.startedAt)) / 86400000) + 1);
+  const deathCount = (Number(state.life.deathCount) || 0) + 1;
+  const summary = { cause, days:lastAliveDays, hugs:state.counts.hugs || 0, letters:(state.simulation.lettersWritten || 0) + state.life.letters.length, earned:state.economy.totalEarned || 0, achievements:state.achievements.length, decisions:state.eventEngine.totalResolved || 0, memories:state.album.memories.length };
+  state = cloneDefaultState(); state.startedAt = deathAt; state.lastSaved = deathAt;
+  Object.keys(state.stats).forEach(key => state.stats[key] = 0);
+  Object.keys(state.simulation).forEach(key => { if (typeof state.simulation[key] === "number") state.simulation[key] = 0; });
+  state.economy.coins = 0; state.panchito.friendship = 0;
+  state.life.isDead = true; state.life.deathAt = deathAt; state.life.lastAliveDays = lastAliveDays; state.life.deathCount = deathCount; state.life.aliveSince = deathAt; state.life.deathSummary = summary;
+  loveTreeXP = 0; loveTreeLevel = 1; currentMood = "muerto";
+  renderLoveTree(); renderGifts(); renderOutfitShop(); applyEquippedOutfit(); renderAlbum(); renderDiary(); renderPanchito(); renderNovelProgress(); updateChatCounter(); renderReporterLife(); renderLifeStore(); renderTimeline(); renderOffice(); showLifeEventAlert(false);
+  $("#deathOverlay").classList.remove("hidden"); $("#pet").classList.add("is-dead");
+  toast("×_×", "GAME OVER", `La vida duró ${lastAliveDays} día(s). Todo el progreso se perdió.`);
+  renderLifeCounter(); saveState();
+}
+
+function renderLifeCounter() {
+  if (!$("#aliveDaysCount")) return;
+  $("#aliveDaysCount").textContent = getAliveDays(); $("#vitalityValue").textContent = `${getVitality()}%`;
+  $("#aliveWorldFrame").classList.toggle("is-dead", Boolean(state.life.isDead));
+  $("#deathOverlay").classList.toggle("hidden", !state.life.isDead);
+  $("#pet").classList.toggle("is-dead", Boolean(state.life.isDead));
+  if (state.life.isDead && state.life.deathSummary && $("#deathSummary")) {
+    const s = state.life.deathSummary;
+    $("#deathSummary").innerHTML = `<span>📅 Días vividos <b>${s.days}</b></span><span>🫂 Abrazos <b>${s.hugs}</b></span><span>💌 Cartas <b>${s.letters}</b></span><span>💰 Dinero ganado <b>$${s.earned}</b></span><span>🏆 Logros <b>${s.achievements}</b></span><span>❗ Decisiones <b>${s.decisions}</b></span><span>📖 Recuerdos <b>${s.memories}</b></span><span>🕯 Causa <b>${escapeHTML(s.cause)}</b></span>`;
+  }
+}
+
+function restartReporterLife() {
+  resetGame();
+}
+
 function updateRoomState(mood) {
   const pet = $("#pet");
-  const states = ["happy", "sad", "critical", "sleeping", "phone", "photo", "working", "idle"];
+  const states = ["happy", "sad", "critical", "dead", "sleeping", "phone", "photo", "working", "idle", "read", "dj", "music", "game", "pancho", "coffee", "gift", "stars", "clean"];
   states.forEach(name => pet.classList.remove(`room-state-${name}`));
   let visual = "idle";
-  if (mood === "critico") visual = "critical";
+  if (mood === "muerto") visual = "dead";
+  else if (mood === "critico") visual = "critical";
   else if (["triste", "muy-triste", "abrazos"].includes(mood)) visual = "sad";
   else if (mood === "dormido") visual = "sleeping";
   else if (mood === "esperando") visual = "phone";
   else if (["enamorado", "enfermo", "atrevido"].includes(mood)) visual = "photo";
-  else if (mood === "feliz") visual = "happy";
-  else visual = "working";
+  else if (state.simulation?.currentActivity?.visual && Date.now() < Number(state.simulation.currentActivity.endsAt || 0)) visual = state.simulation.currentActivity.visual;
+  else {
+    const personalityVisual = LIFE_MOODS[state.life.mood]?.visual || "working";
+    visual = personalityVisual === "panchito" ? "happy" : personalityVisual;
+  }
   pet.classList.add(`room-state-${visual}`);
   state.world.reporterVisualState = visual;
   if (["sad", "critical"].includes(visual)) setPanchitoVisual("supporting");
   else if (visual === "sleeping") setPanchitoVisual("sleeping");
+  else if (state.life.mood === "panchitoMode") setPanchitoVisual("supporting");
 }
 
 function interactWithRoomObject(object) {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (state.life.isDead) { setMessage("El mundo está esperando que el reporterito comience una nueva vida."); return; }
   const messages = {
     window: TIME_PERIOD_INFO[state.world.timePeriod][2],
     photo: "El reporterito volvió a quedarse viendo la foto de la Directiva.",
@@ -663,8 +1166,15 @@ function interactWithRoomObject(object) {
     plant: "El reporterito regó la planta con la misma paciencia que cuida el Árbol de Amor.",
     phone: "El reporterito abrió el celular esperando un mensajito."
   };
-  if (object === "phone") openChat();
+  const cooldownKey = `room-${object}`;
+  if ((actionCooldowns[cooldownKey] || 0) > Date.now()) { setMessage(messages[object]); return; }
+  actionCooldowns[cooldownKey] = Date.now() + 6000;
+  state.world.roomInteractions = (Number(state.world.roomInteractions) || 0) + 1;
+  changeStats({ attention: 1 });
+  if (object === "phone") { if (Math.random() < .45) phoneNotification(); else openChat(); }
   setMessage(messages[object] || "El cuarto guarda un pequeño recuerdo.");
+  rememberFirst(`room-${object}`, `El reporterito recordó la primera vez que la Directiva prestó atención a ${object === "photo" ? "su foto favorita" : `su ${object}`}.`);
+  checkLifeAchievements(); render(); saveState();
 }
 
 /* Panchito */
@@ -681,10 +1191,16 @@ function renderPanchito() {
   $("#panchitoPets").textContent = state.panchito.pets || 0;
   $("#panchitoFeeds").textContent = state.panchito.feeds || 0;
   $("#panchitoPlays").textContent = state.panchito.plays || 0;
+  $("#panchitoHunger").textContent = `${Math.round(state.panchito.hunger)}%`;
+  $("#panchitoEnergy").textContent = `${Math.round(state.panchito.energy)}%`;
+  $("#panchitoHappiness").textContent = `${Math.round(state.panchito.happiness)}%`;
+  $("#panchitoFriendship").textContent = `${Math.round(state.panchito.friendship)}%`;
   setPanchitoVisual(state.panchito.action || "happy");
 }
 
 function handlePanchitoAction(action) {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (state.life.isDead) return;
   const remaining = (panchitoCooldowns[action] || 0) - Date.now();
   if (remaining > 0) {
     setMessage("Panchito sigue procesando tanto cariño y mueve la colita pacientemente.");
@@ -698,6 +1214,9 @@ function handlePanchitoAction(action) {
   const data = actions[action];
   if (!data) return;
   changeStats(data.changes); addTreeXP(1);
+  if (action === "pet") { state.panchito.friendship = clamp(state.panchito.friendship + 3); state.panchito.happiness = clamp(state.panchito.happiness + 4); applyLifeEffects({happiness:1}); }
+  if (action === "feed") { state.panchito.hunger = clamp(state.panchito.hunger + 15); state.panchito.happiness = clamp(state.panchito.happiness + 2); applyLifeEffects({pancho:1}); }
+  if (action === "play") { state.panchito.energy = clamp(state.panchito.energy - 3); state.panchito.happiness = clamp(state.panchito.happiness + 7); applyLifeEffects({pancho:3,fun:2}); }
   state.panchito[data.counter] = (Number(state.panchito[data.counter]) || 0) + 1;
   panchitoCooldowns[action] = Date.now() + 6000;
   setPanchitoVisual(data.visual); renderPanchito();
@@ -707,16 +1226,18 @@ function handlePanchitoAction(action) {
 }
 
 function cyclePanchitoBehavior() {
+  if (state.life.isDead) { setPanchitoVisual("sleeping"); return; }
   if (isCritical() || average() < 35) setPanchitoVisual("supporting");
   else setPanchitoVisual(randomFrom(["happy", "idle", "sleeping", "happy"]));
   saveState();
 }
 
 function showPanchitoEvent() {
-  if (document.visibilityState === "hidden" || currentEvent) return;
+  if (state.life.isDead || isReporterSleepingNow() || document.visibilityState === "hidden" || currentEvent || anyModalOpen()) return;
   const unseen = PANCHITO_EVENTS.filter(event => !state.panchito.eventsSeen.includes(event.id));
   const event = randomFrom(unseen.length ? unseen : PANCHITO_EVENTS);
   if (!state.panchito.eventsSeen.includes(event.id)) state.panchito.eventsSeen.push(event.id);
+  rememberFirst("firstPanchitoEvent", "El reporterito recordó el primer evento especial que compartió con Panchito.");
   changeStats(event.changes); addTreeXP(1);
   if (event.gift) grantGift(event.gift, "HALLAZGO DE PANCHITO");
   if (event.randomGift) grantNextGift("REGALO DE PANCHITO");
@@ -739,6 +1260,7 @@ function grantGift(id, source = "MOMENTO ESPECIAL") {
   const gift = GIFT_DEFINITIONS.find(item => item.id === id);
   if (!gift || state.gifts.owned.includes(id)) return false;
   state.gifts.owned.push(id); state.gifts.visible.push(id);
+  rememberFirst("firstGift", `El reporterito recordó su primer regalo: ${gift.name}.`);
   state.gifts.positions[id] = state.gifts.owned.length - 1;
   addTreeXP(2);
   addAlbumMemory(`El reporterito recibió ${gift.name.toLowerCase()} y lo colocó en su cuarto.`, "REGALO", gift.icon, `gift-${id}`);
@@ -756,7 +1278,7 @@ function toggleGift(id) {
 
 function moveGift(id) {
   if (!state.gifts.owned.includes(id)) return;
-  state.gifts.positions[id] = ((Number(state.gifts.positions[id]) || 0) + 1) % 10;
+  state.gifts.positions[id] = ((Number(state.gifts.positions[id]) || 0) + 1) % 15;
   renderGifts(); saveState();
 }
 
@@ -766,10 +1288,576 @@ function renderGifts() {
     const owned = state.gifts.owned.includes(gift.id), visible = state.gifts.visible.includes(gift.id);
     return `<article class="gift-card ${owned ? "owned" : ""}"><span class="gift-icon">${owned ? gift.icon : "?"}</span><strong>${owned ? gift.name : "Regalo oculto"}</strong><small>${owned ? gift.description : "Todavía no encontrado"}</small><div><button data-gift-toggle="${gift.id}">${visible ? "Guardar" : "Mostrar"}</button><button data-gift-move="${gift.id}">Mover</button></div></article>`;
   }).join("");
-  $("#roomGifts").innerHTML = state.gifts.visible.map(id => {
+  const memoryGifts = state.gifts.visible.map(id => {
     const gift = GIFT_DEFINITIONS.find(item => item.id === id); if (!gift) return "";
     return `<button class="room-gift pos-${Number(state.gifts.positions[id]) || 0}" data-gift-move="${id}" aria-label="Mover ${gift.name}">${gift.icon}</button>`;
   }).join("");
+  const purchasedDecor = state.economy.ownedItems.map((id,index) => {
+    const item = LIFE_STORE_ITEMS.find(entry => entry.id === id && entry.type !== "gift");
+    return item ? `<span class="room-gift pos-${(index + 8) % 15}" aria-label="${item.name}">${item.icon}</span>` : "";
+  }).join("");
+  $("#roomGifts").innerHTML = memoryGifts + purchasedDecor;
+}
+
+/* Monedas y guardarropa */
+function initializeOutfitShop() {
+  for (let level = 2; level <= loveTreeLevel; level++) awardLevelCoins(level, false);
+  renderOutfitShop(); applyEquippedOutfit();
+}
+
+function awardLevelCoins(level, announce = true) {
+  if (state.economy.awardedLevels.includes(level)) return;
+  const rewards = { 2:40, 3:60, 4:90, 5:130, 6:200 };
+  const amount = rewards[level] || level * 20;
+  state.economy.coins = (Number(state.economy.coins) || 0) + amount;
+  state.economy.awardedLevels.push(level);
+  addJournalEntry(`El Árbol de Amor llegó al nivel ${level} y entregó ${amount} monedas.`, "RECOMPENSA DE NIVEL", "◉", `coins-level-${level}`);
+  if (announce) toast("◉", `${amount} MONEDAS OBTENIDAS`, `Recompensa por alcanzar el nivel ${level}.`);
+  if ($("#outfitGrid")) renderOutfitShop();
+}
+
+function buyOrEquipOutfit(id) {
+  if (state.life.isDead) return;
+  const outfit = OUTFIT_DEFINITIONS.find(item => item.id === id); if (!outfit) return;
+  if (!state.economy.unlockedOutfits.includes(id)) {
+    if (state.economy.coins < outfit.cost) { toast("◉", "MONEDAS INSUFICIENTES", `Faltan ${outfit.cost - state.economy.coins} monedas.`); return; }
+    state.economy.coins -= outfit.cost; state.economy.unlockedOutfits.push(id);
+    addJournalEntry(`El reporterito compró ${outfit.name.toLowerCase()} y lo guardó en su ropero.`, "ROPA NUEVA", outfit.icon, `outfit-${id}`);
+    toast(outfit.icon, "ROPA DESBLOQUEADA", outfit.name);
+  }
+  state.economy.equippedOutfit = id; applyEquippedOutfit(); renderOutfitShop(); saveState();
+}
+
+function applyEquippedOutfit() {
+  const valid = OUTFIT_DEFINITIONS.some(item => item.id === state.economy.equippedOutfit);
+  if (!valid || !state.economy.unlockedOutfits.includes(state.economy.equippedOutfit)) state.economy.equippedOutfit = "classic";
+  $("#pet").dataset.outfit = state.economy.equippedOutfit;
+  const outfit = OUTFIT_DEFINITIONS.find(item => item.id === state.economy.equippedOutfit);
+  $("#pet").style.setProperty("--equipped-outfit", outfit?.color || "#e8e5d5");
+}
+
+function renderOutfitShop() {
+  $("#coinCount").textContent = state.economy.coins || 0;
+  $("#outfitGrid").innerHTML = OUTFIT_DEFINITIONS.map(outfit => {
+    const owned = state.economy.unlockedOutfits.includes(outfit.id), equipped = state.economy.equippedOutfit === outfit.id;
+    const label = equipped ? "Equipado" : owned ? "Usar" : `Comprar · ${outfit.cost} ◉`;
+    return `<article class="outfit-card ${equipped ? "equipped" : ""}"><div class="outfit-preview" style="--outfit-color:${outfit.color}">${outfit.icon}</div><strong>${outfit.name}</strong><small>${outfit.description}</small><button data-outfit="${outfit.id}" ${equipped ? "disabled" : ""}>${label}</button></article>`;
+  }).join("");
+}
+
+/* Reporterito Life: simulación, feed, economía y eventos con decisiones. */
+
+/* V8 · Directiva como segundo personaje, llamadas, citas y sueños visuales */
+const DIRECTIVA_ACTIVITIES = {
+  visit: { label:"Visita la oficina", className:"is-happy", text:"La Directiva llegó a la oficina y el reporterito corrió emocionado." },
+  read: { label:"Lee cartas", className:"is-reading", text:"La Directiva está leyendo una carta del reporterito en el escritorio." },
+  pancho: { label:"Busca a Pancho", className:"is-pancho", text:"La Directiva se acercó a Pancho y él movió la colita como gerente de felicidad." },
+  coffee: { label:"Toma café", className:"is-coffee", text:"La Directiva tomó café y el reporterito fingió trabajar para no ponerse nervioso." },
+  tree: { label:"Pasea junto al árbol", className:"is-tree", text:"La Directiva se quedó viendo el Árbol de Amor y una hoja de corazón cayó despacito." }
+};
+const DIRECTIVA_INTERACTIONS = [
+  { id:"hug", label:"🤗 Pedir abrazo", result:"La Directiva le dio un abrazo al reporterito. El sistema emocional se estabilizó.", effects:{love:6,happiness:5,trust:3,energy:-1}, directiva:{affection:2,happiness:2,energy:-1}, memory:"Primer abrazo compartido dentro del mundo." },
+  { id:"letter", label:"💌 Entregar carta", result:"El reporterito le entregó una carta y se puso rojito esperando su reacción.", effects:{love:4,trust:4,motivation:-1,memories:1}, directiva:{affection:3,trust:2,stress:-2}, memory:"Una carta quedó guardada entre los recuerdos compartidos." },
+  { id:"flower", label:"🌹 Regalar flor", result:"El reporterito le regaló una flor a la Directiva. El Árbol de Amor brilló un poquito.", effects:{love:5,happiness:3,money:-8,memories:1}, directiva:{affection:4,happiness:2}, memory:"La primera flor entregada a la Directiva dentro del juego." },
+  { id:"coffee", label:"☕ Dar café", result:"La Directiva aceptó el café. El reporterito ganó puntos de empleado atento.", effects:{prestige:3,trust:2,money:-4}, directiva:{energy:5,stress:-3,hunger:1}, memory:"Café compartido en la oficina." },
+  { id:"joke", label:"😂 Contar chiste", result:"El chiste fue malísimo, pero la Directiva se rió por ternura.", effects:{fun:6,happiness:3,prestige:-1}, directiva:{happiness:3,stress:-2}, memory:null },
+  { id:"song", label:"🎵 Compartir canción", result:"El reporterito compartió una canción y el momento quedó sonando en el cuarto.", effects:{love:3,fun:3,memories:1}, directiva:{affection:2,mood:3}, memory:"Una canción compartida desde el celular del escritorio." },
+  { id:"photo", label:"📸 Tomar foto", result:"Tomaron una foto pixelada. El celular la guardó en el álbum de recuerdos.", effects:{love:4,happiness:4,memories:1}, directiva:{happiness:3,affection:2}, memory:"Primera foto de la Directiva y el reporterito en la oficina." },
+  { id:"pancho", label:"🐶 Hablar de Pancho", result:"Pancho se sintió incluido y exigió un cargo importante en la empresa.", effects:{pancho:5,fun:3}, directiva:{happiness:2}, memory:"Pancho fue tema oficial de conversación." }
+];
+const DIRECTIVA_CALL_TOPICS = [
+  {label:"❤️ Decir que la extraña", text:"La llamada terminó con el reporterito sonriendo como menso.", effects:{love:4,trust:2}, directiva:{affection:2}},
+  {label:"☕ Hablar del día", text:"La Directiva escuchó el reporte completo del día y el reporterito se sintió acompañado.", effects:{trust:3,motivation:2}, directiva:{stress:-2}},
+  {label:"🐶 Hablar de Pancho", text:"Pancho ladró en medio de la llamada como si también quisiera opinar.", effects:{pancho:3,fun:3}, directiva:{happiness:2}},
+  {label:"🌌 Hablar de sueños", text:"El reporterito contó un sueño y el celular lo guardó para la noche.", effects:{love:2,memories:1}, directiva:{mood:2}},
+  {label:"😂 Contar algo divertido", text:"La Directiva se rió y el reporterito decidió que ese sonido debía guardarse en el álbum.", effects:{fun:5,happiness:2}, directiva:{happiness:3}}
+];
+const DIRECTIVA_DATES = [
+  {id:"park", icon:"🌳", name:"Parque", text:"La Directiva y el reporterito caminaron por un parque imaginario lleno de hojas de corazón."},
+  {id:"coffee", icon:"☕", name:"Cafetería", text:"Compartieron café en una cafetería pixelada donde Pancho intentó pagar con una croqueta."},
+  {id:"stars", icon:"🌌", name:"Ver estrellas", text:"Vieron estrellas desde la ventana y el reporterito pidió el mismo deseo de siempre."},
+  {id:"burger", icon:"🍔", name:"Hamburguesería", text:"La cita terminó con hamburguesas y un reporterito demasiado feliz."},
+  {id:"fair", icon:"🎡", name:"Feria", text:"Subieron a una rueda de la fortuna imaginaria y el mundo se llenó de luces rosas."},
+  {id:"cinema", icon:"🎬", name:"Cine", text:"Vieron una película romántica y Pancho se durmió a la mitad."}
+];
+function ensureDirectivaState() {
+  state.directiva = { ...DEFAULT_STATE.directiva, ...(state.directiva || {}), stats:{...DEFAULT_STATE.directiva.stats,...(state.directiva?.stats || {})} };
+  state.directiva.messages = Array.isArray(state.directiva.messages) ? state.directiva.messages : [];
+  state.directiva.dates = Array.isArray(state.directiva.dates) ? state.directiva.dates : [];
+  state.directiva.sharedMemories = Array.isArray(state.directiva.sharedMemories) ? state.directiva.sharedMemories : [];
+}
+function initializeDirectiva() {
+  ensureDirectivaState();
+  if (!state.directiva.nextVisitAt) state.directiva.nextVisitAt = Date.now() + 90000 + Math.floor(Math.random()*150000);
+  if (state.directiva.present) summonDirectiva(state.directiva.activity || "visit", false);
+  renderDirectiva();
+}
+function renderDirectiva() {
+  ensureDirectivaState();
+  const directiva = $("#directivaCharacter"); if (!directiva) return;
+  directiva.classList.toggle("hidden", !state.directiva.present || state.life.isDead);
+  Object.values(DIRECTIVA_ACTIVITIES).forEach(a => directiva.classList.remove(a.className));
+  const activity = DIRECTIVA_ACTIVITIES[state.directiva.activity] || DIRECTIVA_ACTIVITIES.visit;
+  if (state.directiva.present && !state.life.isDead) directiva.classList.add(activity.className);
+}
+function maybeDirectivaVisit() {
+  if (state.life.isDead || isReporterSleepingNow() || getTimePeriod() === "late" || anyModalOpen()) return;
+  ensureDirectivaState();
+  if (state.directiva.present) return;
+  if (Date.now() >= Number(state.directiva.nextVisitAt || 0)) summonDirectiva(randomFrom(Object.keys(DIRECTIVA_ACTIVITIES)), true);
+}
+function summonDirectiva(activity="visit", announce=true) {
+  ensureDirectivaState();
+  state.directiva.present = true; state.directiva.activity = DIRECTIVA_ACTIVITIES[activity] ? activity : "visit"; state.directiva.lastVisitAt = Date.now();
+  const data = DIRECTIVA_ACTIVITIES[state.directiva.activity];
+  if (announce) { setMessage(data.text); toast("❤️", "LA DIRECTIVA LLEGÓ", data.label); addTimeline("❤️", data.text, "DIRECTIVA"); addJournalEntry(data.text, "VISITA DE LA DIRECTIVA", "❤️"); }
+  applyLifeEffects({love:2,happiness:2,trust:1});
+  renderDirectiva(); saveState();
+  clearTimeout(window.__directivaLeaveTimer);
+  window.__directivaLeaveTimer = setTimeout(() => dismissDirectiva(true), 90000 + Math.floor(Math.random()*60000));
+}
+function dismissDirectiva(announce=false) {
+  ensureDirectivaState();
+  if (!state.directiva.present) return;
+  state.directiva.present = false; state.directiva.nextVisitAt = Date.now() + 180000 + Math.floor(Math.random()*240000);
+  if (announce && !state.life.isDead) setMessage("La Directiva salió de la oficina, pero dejó el mundo oliendo a cariño.");
+  renderDirectiva(); saveState();
+}
+function openDirectivaPanel() {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (state.life.isDead) return;
+  if (!state.directiva.present) summonDirectiva("visit", true);
+  ensureDirectivaState();
+  const activity = DIRECTIVA_ACTIVITIES[state.directiva.activity] || DIRECTIVA_ACTIVITIES.visit;
+  $("#directivaModalTitle").textContent = activity.label;
+  $("#directivaModalText").textContent = activity.text;
+  const labels = {affection:"❤️ Cariño",happiness:"😊 Felicidad",energy:"😴 Energía",hunger:"🍔 Hambre",stress:"😤 Estrés",mood:"🌸 Ánimo",trust:"🤝 Confianza"};
+  $("#directivaStatGrid").innerHTML = Object.entries(labels).map(([key,label]) => `<span>${label}<b>${clamp(state.directiva.stats[key] || 0)}%</b></span>`).join("");
+  $("#directivaActions").innerHTML = DIRECTIVA_INTERACTIONS.map((item,index) => `<button data-directiva-action="${index}">${item.label}</button>`).join("") + `<button data-directiva-call="true">📞 Llamar después</button><button data-directiva-date="true">💞 Invitar a cita</button>`;
+  openModal("directivaModal");
+}
+function applyDirectivaStats(changes={}) {
+  ensureDirectivaState();
+  Object.entries(changes).forEach(([key, delta]) => { state.directiva.stats[key] = clamp((Number(state.directiva.stats[key]) || 0) + delta); });
+}
+function chooseDirectivaInteraction(index) {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  const interaction = DIRECTIVA_INTERACTIONS[index]; if (!interaction || state.life.isDead) return;
+  if (interaction.effects.money < 0 && state.economy.coins < Math.abs(interaction.effects.money)) { toast("💰","FALTAN MONEDAS","El reporterito quiere hacerlo, pero no le alcanza todavía."); return; }
+  applyLifeEffects(interaction.effects); applyDirectivaStats(interaction.directiva);
+  if (interaction.memory) addSharedMemory(interaction.memory, interaction.id === "photo" ? "📸" : interaction.id === "flower" ? "🌹" : "💞");
+  addTreeXP(3); setMessage(interaction.result); addTimeline("💞", interaction.result, "DIRECTIVA"); addJournalEntry(interaction.result,"INTERACCIÓN CON LA DIRECTIVA","💞");
+  renderDirectiva(); openDirectivaPanel(); render(); saveState();
+}
+function addSharedMemory(text, icon="💞") {
+  ensureDirectivaState();
+  const id = `shared-${Date.now()}-${Math.random()}`;
+  state.directiva.sharedMemories.push({id,text,icon,at:Date.now(),day:getGameDay()}); state.directiva.sharedMemories = state.directiva.sharedMemories.slice(-100);
+  addAlbumMemory(text,"RECUERDO COMPARTIDO",icon,id);
+}
+function makeDirectivaCall(topicIndex=null) {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  const topic = topicIndex === null ? randomFrom(DIRECTIVA_CALL_TOPICS) : DIRECTIVA_CALL_TOPICS[topicIndex];
+  if (!topic || state.life.isDead) return;
+  applyLifeEffects(topic.effects); applyDirectivaStats(topic.directiva);
+  const text = `📞 ${topic.text}`; state.directiva.messages.push({text,at:Date.now()}); state.directiva.messages = state.directiva.messages.slice(-60);
+  addJournalEntry(text,"LLAMADA CON LA DIRECTIVA","📞"); addTimeline("📞",text,"CELULAR"); setMessage(text); toast("📞","LLAMADA","La Directiva contestó."); closeModal("directivaModal"); render(); saveState();
+}
+function startDirectivaDate() {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (state.life.isDead) return;
+  const cost = 18;
+  if (state.economy.coins < cost) { toast("💰","FALTAN MONEDAS",`Necesitas $${cost} para invitarla a una cita.`); return; }
+  state.economy.coins -= cost;
+  const date = randomFrom(DIRECTIVA_DATES.filter(d => !state.directiva.dates.slice(-4).some(x => x.id === d.id)) || DIRECTIVA_DATES);
+  state.directiva.dates.push({...date,at:Date.now(),day:getGameDay()}); state.directiva.dates = state.directiva.dates.slice(-80);
+  applyLifeEffects({love:8,happiness:6,trust:4,fun:4,memories:1}); applyDirectivaStats({affection:5,happiness:5,stress:-4,mood:5}); addTreeXP(6);
+  addSharedMemory(date.text,date.icon); addJournalEntry(date.text,`CITA · ${date.name}`,date.icon); addTimeline(date.icon,date.text,"CITA"); setMessage(date.text); toast(date.icon,"CITA DESBLOQUEADA",date.name); closeModal("directivaModal"); render(); saveState();
+}
+function phoneNotification() {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (state.life.isDead) return;
+  const options = ["No olvides comer.","Hoy te extrañé.","Estoy orgullosa de ti.","Gracias por estar aquí.","La Directiva solicita reporte emocional."];
+  const text = `📱 Notificación de la Directiva: “${randomFrom(options)}”`;
+  state.directiva.messages.push({text,at:Date.now()}); state.directiva.messages = state.directiva.messages.slice(-60);
+  addJournalEntry(text,"CELULAR DEL ESCRITORIO","📱"); addTimeline("📱",text,"CELULAR"); applyLifeEffects({love:2,trust:1,happiness:1}); setMessage(text); toast("📱","MENSAJE NUEVO","El celular del escritorio brilló."); render(); saveState();
+}
+function describeLatestDream() {
+  const last = state.life.dreams.at(-1)?.text || randomFrom(REPORTER_DREAMS);
+  const text = `💭 Al despertar, el reporterito contó: “${last}”`;
+  addJournalEntry(text,"SUEÑO CONTADO","💭"); setMessage(text); toast("💭","SUEÑO DEL REPORTERITO",last); saveState();
+}
+
+function initializeReporterLife() {
+  ensureAutonomousState();
+  renderReporterLife(); renderLifeStore(); renderTimeline(); renderOffice(); renderCurrentActivity();
+  runAutonomousLife(true);
+  if (!state.eventEngine.nextAt) scheduleNextLifeEvent();
+  if (state.eventEngine.pending) showLifeEventAlert(true);
+  else checkLifeEventSchedule();
+  addTimeline("🏠", "El reporterito comenzó otro capítulo dentro de su pequeño mundo.", "VISITA", `visit-life-${localDateKey()}`);
+}
+
+function getLifeValue(key) {
+  const map = { love:state.stats.affection, happiness:state.simulation.happiness, energy:state.stats.energy, hunger:state.simulation.hunger, motivation:state.simulation.motivation, pancho:state.panchito.friendship, prestige:state.simulation.prestige, trust:state.stats.trust, fun:state.simulation.fun };
+  return Math.round(Number(map[key]) || 0);
+}
+
+function setLifeValue(key, value) {
+  const amount = clamp(value);
+  if (key === "love") state.stats.affection = amount;
+  else if (key === "energy") state.stats.energy = amount;
+  else if (key === "trust") state.stats.trust = amount;
+  else if (key === "pancho") state.panchito.friendship = amount;
+  else if (["happiness","hunger","motivation","prestige","fun"].includes(key)) state.simulation[key] = amount;
+}
+
+function applyLifeEffects(effects = {}) {
+  Object.entries(effects).forEach(([key, delta]) => {
+    if (key === "money") {
+      state.economy.coins = Math.max(0, (Number(state.economy.coins) || 0) + delta);
+      if (delta > 0) state.economy.totalEarned = (Number(state.economy.totalEarned) || 0) + delta;
+    } else if (key === "memories") {
+      if (delta > 0) addAlbumMemory("El reporterito convirtió una decisión en un recuerdo que seguirá influyendo en su historia.", "DECISIÓN", "💌");
+    } else setLifeValue(key, getLifeValue(key) + delta);
+  });
+  updateOfficeLevel(); renderReporterLife(); renderOffice(); renderOutfitShop(); renderLifeStore();
+}
+
+function renderReporterLife() {
+  if (!$("#lifeStatGrid")) return;
+  $("#lifeStatGrid").innerHTML = Object.entries(LIFE_STAT_INFO).map(([key, info]) => {
+    const value = getLifeValue(key);
+    return `<div class="life-stat" data-low="${value < 25}"><label><span>${info.icon} ${info.label}</span><b>${value}%</b></label><div class="life-stat-track"><div class="life-stat-fill" style="width:${value}%"></div></div></div>`;
+  }).join("");
+  $("#lifeMoney").textContent = state.economy.coins || 0;
+  $("#prestigeLabel").textContent = `${getLifeValue("prestige")}%`;
+  $("#panchoFriendshipLabel").textContent = `${getLifeValue("pancho")}%`;
+  $("#lifeMemoryCount").textContent = state.album.memories.length;
+  $("#officeLevelLabel").textContent = `Nivel ${state.simulation.officeLevel}`;
+  renderPersonality();
+}
+
+function addTimeline(icon, text, type = "VIDA", id = null) {
+  if (id && state.timeline.some(entry => entry.id === id)) return;
+  state.timeline.push({ id:id || `timeline-${Date.now()}-${Math.random()}`, icon, text, type, day:getGameDay(), at:Date.now() });
+  state.timeline = state.timeline.slice(-500);
+  if ($("#lifeTimeline")) renderTimeline();
+}
+
+function renderTimeline() {
+  if (!$("#lifeTimeline")) return;
+  $("#timelineCount").textContent = state.timeline.length;
+  const entries = state.timeline.slice(-100).reverse();
+  $("#lifeTimeline").innerHTML = entries.length ? entries.map(entry => `<article class="timeline-entry"><span>${escapeHTML(entry.icon)}</span><b>DÍA ${entry.day} · ${escapeHTML(entry.type)}</b><p>${escapeHTML(entry.text)}</p><small>${new Date(entry.at).toLocaleString("es-MX",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}</small></article>`).join("") : '<p class="diary-empty">La historia está esperando su primer momento.</p>';
+}
+
+function dominantTrait() {
+  const entries = Object.entries(state.eventEngine.traits).sort((a,b) => b[1] - a[1]);
+  return entries[0]?.[1] > 0 ? entries[0][0] : "support";
+}
+
+function renderPersonality() {
+  if (!$("#personalitySummary")) return;
+  const labels = {support:"Cariñoso y atento",avoidance:"Independiente, pero algo evasivo",flowers:"Romántico de las flores",generosity:"Generoso y detallista",courage:"Valiente y trabajador",humor:"Bromista profesional",panchoCare:"Mejor amigo de Pancho"};
+  const trait = dominantTrait();
+  $("#personalitySummary").textContent = labels[trait];
+  const count = state.eventEngine.totalResolved || 0;
+  $("#memoryInfluence").textContent = count ? `${count} decisiones ya influyen en sus pensamientos, cartas y eventos.` : "La historia apenas está comenzando.";
+}
+
+function eventPick(array, index, offset = 0) { return array[(index + offset) % array.length]; }
+function fillEventText(text, index) {
+  const memory = state.album.memories.at(-1)?.text;
+  return text.replaceAll("{activity}",eventPick(EVENT_WORDS.activities,index)).replaceAll("{place}",eventPick(EVENT_WORDS.places,index,1)).replaceAll("{object}",eventPick(EVENT_WORDS.objects,index,2)).replaceAll("{romance}",eventPick(EVENT_WORDS.romances,index,3)).replaceAll("{panchoAction}",eventPick(EVENT_WORDS.panchoActions,index,4)).replaceAll("{rareFind}",eventPick(EVENT_WORDS.rareFinds,index,5)).replaceAll("{legendaryThing}",eventPick(EVENT_WORDS.legendaryThings,index,6)).replaceAll("{mythicThing}",eventPick(EVENT_WORDS.mythicThings,index,7)) + (memory && index % 5 === 0 ? ` Además, recordó: “${memory.slice(0,90)}”.` : "");
+}
+
+function generateLifeEvent(rarity, index) {
+  const bank = EVENT_BANKS[rarity], title = eventPick(bank.titles,index), template = eventPick(bank.situations,index,2);
+  const pools = {
+    common:["practical","playful","work","rest","avoidant"], romantic:["supportive","flower","generous","avoidant","playful"], pancho:["pancho","practical","playful","generous","rest"],
+    rare:["practical","generous","pancho","avoidant","work"], legendary:["supportive","generous","flower","pancho","work","rest"], mythical:["supportive","flower","generous","pancho","work","playful"]
+  };
+  let keys = pools[rarity].slice(0, 2 + (index % Math.min(5,pools[rarity].length)));
+  const moodExtra = {inLove:"flower",tired:"rest",sensitive:"supportive",confident:"work",panchitoMode:"pancho"}[state.life.mood];
+  if (moodExtra && !keys.includes(moodExtra) && keys.length < 6) keys.push(moodExtra);
+  const options = keys.map((key, optionIndex) => ({...DECISION_ARCHETYPES[key], id:key, effects:{...DECISION_ARCHETYPES[key].effects}, result:`${DECISION_ARCHETYPES[key].result} ${optionIndex === 0 ? "El sistema guardó esa elección como parte de su personalidad." : ""}`}));
+  return { id:`${rarity}-${index}`, rarity, icon:eventPick(bank.icons,index), title:`${title}${index % 7 === 0 ? ` · ${eventPick(EVENT_WORDS.places,index)}` : ""}`, description:fillEventText(template,index), options };
+}
+
+function rollLifeEventRarity() {
+  if (state.panchito.mischief > 70 && Math.random() < .35) return "pancho";
+  let roll = Math.random() * 1000, sum = 0;
+  for (const [key,data] of Object.entries(EVENT_RARITIES)) { sum += data.weight; if (roll < sum) return key; }
+  return "common";
+}
+
+function createPendingLifeEvent() {
+  if (state.life.isDead || isReporterSleepingNow() || state.eventEngine.pending) return;
+  const rarity = rollLifeEventRarity(), count = EVENT_CONTENT_COUNTS[rarity];
+  const unseen = Array.from({length:count},(_,i)=>i).filter(i => !state.eventEngine.seenIds.includes(`${rarity}-${i}`));
+  const index = randomFrom(unseen.length ? unseen : Array.from({length:count},(_,i)=>i));
+  state.eventEngine.pending = generateLifeEvent(rarity,index);
+  showLifeEventAlert(true); saveState();
+}
+
+function scheduleNextLifeEvent() {
+  state.eventEngine.nextAt = Date.now() + 60000 + Math.floor(Math.random() * 120001);
+  saveState();
+}
+
+function checkLifeEventSchedule() {
+  if (state.life.isDead || isReporterSleepingNow() || getTimePeriod() === "late") { showLifeEventAlert(false); return; }
+  if (state.eventEngine.pending) { showLifeEventAlert(true); return; }
+  if (Date.now() >= Number(state.eventEngine.nextAt || 0)) createPendingLifeEvent();
+}
+
+function showLifeEventAlert(show) {
+  const shouldShow = Boolean(show) && !isReporterSleepingNow();
+  $("#lifeEventAlert")?.classList.toggle("hidden", !shouldShow);
+}
+
+function openPendingLifeEvent() {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  const event = state.eventEngine.pending; if (!event || state.life.isDead) return;
+  $("#lifeEventRarity").textContent = EVENT_RARITIES[event.rarity].label;
+  $("#lifeEventIcon").textContent = event.icon; $("#lifeEventTitle").textContent = event.title; $("#lifeEventDescription").textContent = event.description;
+  $("#lifeEventIllustration").dataset.rarity = event.rarity;
+  $("#lifeEventOptions").innerHTML = event.options.map((option,index) => {
+    const effectText = Object.entries(option.effects).map(([key,value]) => `${value > 0 ? "+" : ""}${value} ${LIFE_STAT_INFO[key]?.label || (key === "money" ? "Dinero" : key === "memories" ? "Recuerdo" : key)}`).join(" · ");
+    const unaffordable = option.effects.money < 0 && state.economy.coins < Math.abs(option.effects.money);
+    return `<button data-life-event-option="${index}" ${unaffordable ? "disabled" : ""}><b>${escapeHTML(option.label)}</b><small>${escapeHTML(unaffordable ? "No hay suficiente dinero" : effectText)}</small></button>`;
+  }).join("");
+  showLifeEventAlert(false); openModal("lifeEventModal");
+}
+
+function resolveLifeEvent(index) {
+  const event = state.eventEngine.pending, option = event?.options[index]; if (!event || !option) return;
+  applyLifeEffects(option.effects); state.eventEngine.traits[option.trait] = (state.eventEngine.traits[option.trait] || 0) + 1;
+  state.eventEngine.totalResolved++; state.eventEngine.rarityCounts[event.rarity] = (state.eventEngine.rarityCounts[event.rarity] || 0) + 1;
+  if (!state.eventEngine.seenIds.includes(event.id)) state.eventEngine.seenIds.push(event.id);
+  if (event.rarity === "mythical" && !state.eventEngine.unlockedMythics.includes(event.id)) {
+    state.eventEngine.unlockedMythics.push(event.id); applyLifeEffects({money:50,happiness:5});
+    if (!state.economy.unlockedOutfits.includes("legendary")) state.economy.unlockedOutfits.push("legendary");
+    unlock("mythHunter"); grantNextGift("EVENTO MÍTICO"); toast("🌌","RECOMPENSA MÍTICA","$50 y atuendo legendario desbloqueados.");
+  }
+  const record = {eventId:event.id,title:event.title,choice:option.label,result:option.result,effects:option.effects,at:Date.now(),day:getGameDay(),rarity:event.rarity};
+  state.eventEngine.decisions.push(record); state.eventEngine.decisions = state.eventEngine.decisions.slice(-500); state.eventEngine.history.push(record); state.eventEngine.history = state.eventEngine.history.slice(-300);
+  addTimeline(event.icon, `${event.title}: ${option.result}`, EVENT_RARITIES[event.rarity].label);
+  addJournalEntry(`${event.title}. ${option.result}`, "DECISIÓN", event.icon);
+  if (option.memory || ["rare","legendary","mythical"].includes(event.rarity)) addAlbumMemory(`${event.title}: ${option.result}`, `EVENTO ${EVENT_RARITIES[event.rarity].label}`, event.icon, `life-event-${event.id}`);
+  $("#eventResultIcon").textContent = event.icon; $("#eventResultTitle").textContent = option.label.replace(/^\S+\s/,""); $("#eventResultText").textContent = option.result;
+  $("#eventResultEffects").innerHTML = Object.entries(option.effects).map(([key,value]) => `<span class="${value >= 0 ? "positive" : "negative"}">${value > 0 ? "+" : ""}${value} ${escapeHTML(LIFE_STAT_INFO[key]?.label || (key === "money" ? "Dinero" : "Recuerdo"))}</span>`).join("");
+  state.eventEngine.pending = null; scheduleNextLifeEvent(); closeModal("lifeEventModal"); openModal("eventResultModal");
+  if (state.eventEngine.totalResolved >= 50) unlock("eventExplorer");
+  checkReporterLife(); render(); renderTimeline(); saveState();
+}
+
+const AUTONOMOUS_ACTIONS = [
+  {icon:"📚",title:"Leyendo un libro",text:"El reporterito se sentó a leer un libro y recuperó motivación.",detail:"Leyendo junto al escritorio",effects:{motivation:4,energy:-1,fun:1},kind:"read",visual:"read",duration:[90,180]},
+  {icon:"🎧",title:"Practicando como DJ",text:"El reporterito practicó una mezcla de DJ y se sintió inspirado.",detail:"Probando transiciones para la Directiva",effects:{fun:4,motivation:3,prestige:2,energy:-2},kind:"dj",visual:"dj",duration:[100,220]},
+  {icon:"🎹",title:"Haciendo música",text:"El reporterito abrió su compu y empezó a hacer música.",detail:"Produciendo una canción pixelada",effects:{motivation:4,prestige:3,money:5,energy:-3},kind:"music",visual:"music",duration:[120,260]},
+  {icon:"🐶",title:"Jugando con Pancho",text:"El reporterito jugó con Pancho sin que nadie se lo pidiera.",detail:"Corriendo con Pancho por el cuarto",effects:{pancho:5,fun:4,happiness:3,energy:-2},kind:"pancho",visual:"pancho",duration:[80,160]},
+  {icon:"☕",title:"Preparando café",text:"El reporterito preparó café y volvió al escritorio con energía.",detail:"Café de oficina en proceso",effects:{energy:3,motivation:2,hunger:-1},kind:"coffee",visual:"coffee",duration:[60,120]},
+  {icon:"🧹",title:"Ordenando la oficina",text:"El reporterito limpió el cuarto y se sintió más tranquilo.",detail:"Acomodando recuerdos y papeles",effects:{happiness:2,prestige:2,energy:-2},kind:"clean",visual:"clean",duration:[90,180]},
+  {icon:"📷",title:"Viendo fotos de la Directiva",text:"El reporterito volvió a mirar una foto de la Directiva.",detail:"Recordando cosas bonitas",effects:{love:3,happiness:2,motivation:-1},kind:"photo",visual:"photo",duration:[60,150]},
+  {icon:"✍️",title:"Escribiendo en su diario",text:"El reporterito escribió una página nueva en su diario.",detail:"Guardando pensamientos importantes",effects:{motivation:2,trust:1,energy:-1},kind:"write",visual:"working",duration:[80,170]},
+  {icon:"🌹",title:"Preparando un regalo",text:"El reporterito usó $8 para preparar un regalo imaginario para la Directiva.",detail:"Buscando una sorpresa bonita",effects:{money:-8,love:4,memories:1},kind:"giftDirectiva",visual:"gift",duration:[90,190],requiresMoney:8},
+  {icon:"🌌",title:"Viendo las estrellas",text:"El reporterito se quedó viendo las estrellas y pensó en la Directiva.",detail:"Mirando por la ventana",effects:{love:2,happiness:2,energy:-1},kind:"stars",visual:"stars",duration:[70,150],onlyNight:true},
+  {icon:"😴",title:"Durmiendo",text:"El reporterito está dormido. Zzz...",detail:"De 12:00 a.m. a 8:00 a.m. no puede hacer acciones",effects:{energy:1},kind:"sleep",visual:"sleeping",duration:[300,600],sleepOnly:true}
+];
+
+function ensureAutonomousState() {
+  if (!state.simulation) state.simulation = cloneDefaultState().simulation;
+  if (!state.simulation.currentActivity || typeof state.simulation.currentActivity !== "object") state.simulation.currentActivity = null;
+}
+
+function activityByKind(kind) {
+  return AUTONOMOUS_ACTIONS.find(action => action.kind === kind) || AUTONOMOUS_ACTIONS[0];
+}
+
+function getAvailableAutonomousActions() {
+  if (isReporterSleepingNow()) return AUTONOMOUS_ACTIONS.filter(action => action.sleepOnly);
+  const period = getTimePeriod();
+  return AUTONOMOUS_ACTIONS.filter(action => {
+    if (action.sleepOnly) return false;
+    if (action.requiresMoney && (state.economy.coins || 0) < action.requiresMoney) return false;
+    if (action.onlyNight && period !== "night") return false;
+    return true;
+  });
+}
+
+function startAutonomousActivity(action, catchUp = false) {
+  if (!action || state.life.isDead) return;
+  const durationSeconds = action.duration ? action.duration[0] + Math.floor(Math.random() * (action.duration[1] - action.duration[0] + 1)) : 120;
+  state.simulation.currentActivity = {
+    kind: action.kind,
+    icon: action.icon,
+    title: action.title,
+    detail: action.detail,
+    visual: action.visual,
+    startedAt: Date.now(),
+    endsAt: Date.now() + durationSeconds * 1000,
+    text: action.text
+  };
+  if (!catchUp) {
+    forceReporterVisual(action.visual);
+    setMessage(action.kind === "sleep" ? "El reporterito está durmiendo. Zzz..." : `${action.icon} ${action.title}: ${action.detail}.`);
+  }
+  renderCurrentActivity();
+}
+
+function finishAutonomousActivity(catchUp = false) {
+  ensureAutonomousState();
+  const current = state.simulation.currentActivity;
+  if (!current) return false;
+  const action = activityByKind(current.kind);
+  if (!action) { state.simulation.currentActivity = null; return false; }
+  if (Date.now() < Number(current.endsAt || 0) && !catchUp) return false;
+  applyLifeEffects(action.effects);
+  addTimeline(action.icon, action.text, "VIDA AUTÓNOMA");
+  addJournalEntry(action.text, "VIDA AUTÓNOMA", action.icon);
+  state.simulation.autonomousActions++;
+  if (action.kind === "work" || action.kind === "music" || action.kind === "dj") state.simulation.workSessions++;
+  if (action.kind === "write") state.simulation.lettersWritten++;
+  if (action.kind === "giftDirectiva") state.economy.giftsForDirectiva++;
+  if (action.kind === "pancho") {
+    state.panchito.plays = (Number(state.panchito.plays) || 0) + 1;
+    state.panchito.happiness = clamp(state.panchito.happiness + 5);
+  }
+  state.simulation.currentActivity = null;
+  if (!catchUp) {
+    toast(action.icon, "ACTIVIDAD COMPLETADA", action.text);
+    setMessage(action.text);
+  }
+  renderCurrentActivity();
+  return true;
+}
+
+function renderCurrentActivity() {
+  if (!$("#activityStatusCard")) return;
+  ensureAutonomousState();
+  const sleeping = isReporterSleepingNow();
+  let current = state.simulation.currentActivity;
+  if (state.life.isDead) {
+    current = { icon:"×_×", title:"Fin de la vida", detail:"El reporterito necesita reiniciar su mundo.", endsAt:0, visual:"dead" };
+  } else if (sleeping) {
+    current = { icon:"😴", title:"Durmiendo", detail:"Zzz... De 12:00 a.m. a 8:00 a.m. no puede hacer acciones ni escenas.", endsAt: nextWakeTime().getTime(), visual:"sleeping" };
+    forceReporterVisual("sleeping");
+  } else if (!current) {
+    current = { icon:"✨", title:"Esperando actividad", detail:"Pronto hará algo solo: leer, practicar DJ, producir música o jugar con Pancho.", endsAt:0, visual:"idle" };
+  }
+  $("#activityIcon").textContent = current.icon;
+  $("#activityTitle").textContent = current.title;
+  $("#activityDetail").textContent = current.detail;
+  const remaining = Math.max(0, Math.ceil((Number(current.endsAt || 0) - Date.now()) / 1000));
+  $("#activityTimer").textContent = remaining ? formatClock(remaining) : "AUTO";
+  $("#activityStatusCard").dataset.kind = current.kind || (sleeping ? "sleep" : "idle");
+}
+
+function nextWakeTime(date = new Date()) {
+  const wake = new Date(date);
+  wake.setHours(8, 0, 0, 0);
+  if (date.getHours() >= 8) wake.setDate(wake.getDate() + 1);
+  return wake;
+}
+
+function formatClock(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${String(mins).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
+}
+
+function runAutonomousLife(catchUp = false) {
+  if (state.life.isDead) return;
+  ensureAutonomousState();
+  if (isReporterSleepingNow()) {
+    state.simulation.currentActivity = { kind:"sleep", icon:"😴", title:"Durmiendo", detail:"Zzz... De 12:00 a.m. a 8:00 a.m. no puede hacer acciones", visual:"sleeping", startedAt:Date.now(), endsAt:nextWakeTime().getTime(), text:"El reporterito durmió profundamente." };
+    renderCurrentActivity();
+    return;
+  }
+  if (state.simulation.currentActivity?.kind === "sleep") state.simulation.currentActivity = null;
+  if (finishAutonomousActivity(catchUp)) saveState();
+  const elapsed = Date.now() - Number(state.simulation.lastAutonomyAt || Date.now());
+  const shouldStart = catchUp ? elapsed >= 180000 : elapsed >= 90000;
+  if (!state.simulation.currentActivity && shouldStart) {
+    const pool = getAvailableAutonomousActions();
+    const action = randomFrom(pool.length ? pool : AUTONOMOUS_ACTIONS.filter(action => !action.sleepOnly));
+    startAutonomousActivity(action, catchUp);
+    state.simulation.lastAutonomyAt = Date.now();
+  }
+  renderCurrentActivity();
+  saveState();
+}
+
+function updateOfficeLevel() {
+  const thresholds = [0,15,30,45,60,75,90];
+  const next = thresholds.reduce((level,value,index) => state.simulation.prestige >= value ? index + 1 : level,1);
+  if (next > state.simulation.officeLevel) {
+    state.simulation.officeLevel = next; addTimeline("🏢",`La oficina evolucionó al nivel ${next}.`,"CARRERA"); addAlbumMemory(`La oficina del reporterito llegó al nivel ${next}.`,"OFICINA","🏢",`office-${next}`);
+    toast("🏢","OFICINA MEJORADA",`Nivel ${next} desbloqueado.`);
+  }
+}
+
+function renderOffice() {
+  if (!$("#officeVisual")) return;
+  const level = Math.max(1,Number(state.simulation.officeLevel) || 1);
+  const messages = ["El reporterito comenzó en una oficina pequeña, pero llena de ganas.","Una planta nueva acompaña sus jornadas.","Las fotos hicieron que la oficina se sintiera más suya.","Pancho ya tiene su propia cama de oficina.","Los recuerdos románticos llegaron a las paredes.","La oficina ahora parece de una publicación importante.","El reporterito dirige una oficina legendaria."];
+  $("#officeLevel").textContent = level; $("#officeVisual").dataset.officeLevel = level; $("#officeMessage").textContent = messages[level-1];
+  $("#roomScene").classList.toggle("office-tier-5",level>=5); $("#roomScene").classList.toggle("office-tier-7",level>=7);
+  if (level >= 7) unlock("supremeDirector");
+}
+
+function renderLifeStore() {
+  if (!$("#lifeStoreGrid")) return;
+  $("#lifeStoreGrid").innerHTML = LIFE_STORE_ITEMS.map(item => {
+    const owned = state.economy.ownedItems.includes(item.id), repeatable = item.type === "gift";
+    return `<article class="store-item ${owned ? "owned" : ""}"><span>${item.icon}</span><b>${item.name}</b><small>${item.type === "gift" ? "Regalo con reacción única." : "Mejora permanente de esta vida."}</small><button data-store-item="${item.id}" ${owned && !repeatable ? "disabled" : ""}>${owned && !repeatable ? "Obtenido" : `$${item.cost}`}</button></article>`;
+  }).join("");
+}
+
+function buyLifeStoreItem(id) {
+  if (state.life.isDead) return;
+  const item = LIFE_STORE_ITEMS.find(entry => entry.id === id); if (!item) return;
+  if (state.economy.coins < item.cost) { toast("💰","DINERO INSUFICIENTE",`Faltan $${item.cost-state.economy.coins}.`); return; }
+  if (item.type !== "gift" && state.economy.ownedItems.includes(id)) return;
+  state.economy.coins -= item.cost;
+  if (item.type !== "gift") { state.economy.ownedItems.push(id); applyLifeEffects({happiness:2,prestige:1}); addTimeline(item.icon,`El reporterito compró ${item.name.toLowerCase()} para su mundo.`,"COMPRA"); }
+  else {
+    const giftEffects = {giftBurger:{hunger:8,happiness:2},giftCoffee:{energy:5,motivation:2},giftFlower:{love:5,happiness:3},giftLetter:{love:4,trust:3},giftKiss:{love:3,fun:2}};
+    applyLifeEffects(giftEffects[id] || {happiness:2});
+    if (id === "giftFlower") rememberFirst("firstFlower","El reporterito recordó la primera flor que apareció en esta vida.");
+    addTimeline(item.icon,`El reporterito recibió ${item.name.toLowerCase()} y tuvo una reacción imposible de ocultar.`,"REGALO"); react(`El reporterito recibió ${item.name.toLowerCase()} y lo guardó como un momento bonito.`,item.icon);
+  }
+  renderLifeStore(); renderGifts(); renderReporterLife(); saveState();
+}
+
+let activeMiniGame = null;
+function startMiniGame(type) {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (state.life.isDead) return;
+  const games = {kisses:["Atrapa tres besitos antes de tocar dos espacios vacíos.","💋"],hearts:["Encuentra tres corazones verdaderos.","💗"],pancho:["Encuentra a Pancho tres veces.","🐶"],coffee:["Entrega tres cafés por el camino correcto.","☕"]};
+  if (!games[type]) return; activeMiniGame = {type,target:games[type][1],score:0,misses:0}; $("#miniGameTitle").textContent = games[type][0].split(".")[0]; $("#miniGamePrompt").textContent = games[type][0]; renderMiniGameRound(); openModal("miniGameModal");
+}
+
+function renderMiniGameRound() {
+  if (!activeMiniGame) return;
+  const targetIndex = Math.floor(Math.random()*12);
+  $("#miniGameBoard").innerHTML = Array.from({length:12},(_,i)=>`<button data-minigame-cell="${i===targetIndex ? "target" : "empty"}">${i===targetIndex ? activeMiniGame.target : randomFrom(["·","✦","♡","?"])}</button>`).join("");
+  $("#miniGameStatus").textContent = `Aciertos ${activeMiniGame.score}/3 · Fallos ${activeMiniGame.misses}/2`;
+}
+
+function playMiniGameCell(kind, button) {
+  if (!activeMiniGame) return;
+  if (kind === "target") { activeMiniGame.score++; button.classList.add("hit"); } else activeMiniGame.misses++;
+  if (activeMiniGame.score >= 3 || activeMiniGame.misses >= 2) {
+    const won = activeMiniGame.score >= 3, type = activeMiniGame.type; state.minigames.played++; if (won) state.minigames.wins++;
+    state.minigames.bestScores[type] = Math.max(state.minigames.bestScores[type] || 0,activeMiniGame.score);
+    if (won) { applyLifeEffects({money:8,fun:5,happiness:3}); addTimeline("🎮",`El reporterito ganó ${$("#miniGameTitle").textContent} y obtuvo $8.`,"MINIJUEGO"); $("#miniGameStatus").textContent = "¡Victoria! +$8 · +5 Diversión · +3 Felicidad"; }
+    else { applyLifeEffects({fun:1,energy:-1}); $("#miniGameStatus").textContent = "Esta vez escaparon, pero el reporterito se divirtió."; }
+    $("#miniGameBoard").innerHTML = ""; activeMiniGame = null; if (state.minigames.wins >= 20) unlock("gameMaster"); saveState(); return;
+  }
+  renderMiniGameRound();
 }
 
 /* Conversaciones tipo visual novel */
@@ -779,6 +1867,7 @@ function renderNovelProgress() {
 }
 
 function startNovelScene() {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
   const pending = NOVEL_SCENES.filter(scene => !state.novel.completed.includes(scene.id));
   currentNovel = pending.length ? pending[0] : randomFrom(NOVEL_SCENES);
   novelResolved = false;
@@ -799,6 +1888,7 @@ function advanceNovelScene() {
 }
 
 function chooseNovelOption(index) {
+  if (state.life.isDead) return;
   if (!currentNovel || novelResolved) return;
   const option = currentNovel.options[index]; if (!option) return;
   novelResolved = true;
@@ -853,6 +1943,7 @@ function restoreRecentChat() {
 }
 
 function openChat() {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
   restoreRecentChat();
   showChatComposer();
   openModal("chatModal");
@@ -897,6 +1988,8 @@ function pickChatResponse(text) {
 }
 
 function sendChatMessage(index) {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (state.life.isDead) { setMessage("Esta vida terminó y el chat comenzará desde cero con la siguiente generación."); return; }
   if (chatBusy) return;
   const text = CHAT_CATEGORIES[activeChatCategory][index];
   if (!text) return;
@@ -907,6 +2000,7 @@ function sendChatMessage(index) {
   appendChatBubble("directiva", text);
 
   state.chat.totalSent++;
+  state.life.lastImportant.message = Date.now();
   state.counts.messages++;
   if (state.chat.totalSent === 1 || state.chat.totalSent % 10 === 0) {
     addAlbumMemory(`El reporterito guardó el mensaje número ${state.chat.totalSent} del chat.`, "CHAT", "💬", `chat-${state.chat.totalSent}`);
@@ -1005,6 +2099,7 @@ function determineMood() {
   const s = state.stats;
   const hour = new Date().getHours();
   const redBars = Object.values(s).filter(value => value < 25).length;
+  if (state.life.isDead) return "muerto";
   if (isCritical()) return "critico";
   if (Date.now() < state.daringUntil) return "atrevido";
   if (hour >= 22 || hour < 6) return "dormido";
@@ -1019,10 +2114,14 @@ function determineMood() {
   return "triste";
 }
 
-const moodLabel = mood => ({ enamorado: "ENAMORADO", feliz: "FELIZ", tranquilo: "TRANQUILO", triste: "TRISTE", "muy-triste": "MUY TRISTE", abrazos: "NECESITA ABRAZOS", esperando: "ESPERANDO MENSAJE", critico: "MODO CRÍTICO", dormido: "DORMIDO", enfermo: "ENFERMO DE AMOR", atrevido: "MODO ATREVIDO" }[mood]);
-const visualMood = mood => mood === "critico" ? "muy-triste" : mood === "abrazos" || mood === "esperando" ? "triste" : mood === "enfermo" ? "enamorado" : mood;
+const moodLabel = mood => ({ enamorado: "ENAMORADO", feliz: "FELIZ", tranquilo: "TRANQUILO", triste: "TRISTE", "muy-triste": "MUY TRISTE", abrazos: "NECESITA ABRAZOS", esperando: "ESPERANDO MENSAJE", critico: "MODO CRÍTICO", muerto: "SIN VIDA", dormido: "DORMIDO", enfermo: "ENFERMO DE AMOR", atrevido: "MODO ATREVIDO" }[mood]);
+const visualMood = mood => mood === "muerto" || mood === "critico" ? "muy-triste" : mood === "abrazos" || mood === "esperando" ? "triste" : mood === "enfermo" ? "enamorado" : mood;
 
 function render(forceMessage = false) {
+  checkReporterLife();
+  const dead = state.life.isDead;
+  if (!dead) { updateLifeMood(); updateHeartWeather(); }
+  renderLifeStatus();
   Object.entries(state.stats).forEach(([key, value]) => {
     const element = document.querySelector(`[data-stat="${key}"]`);
     element.querySelector("b").textContent = `${clamp(value)}%`;
@@ -1031,6 +2130,11 @@ function render(forceMessage = false) {
     element.classList.toggle("medium", value >= 30 && value < 55);
   });
   const newMood = determineMood();
+  if (!dead && currentMood === "critico" && newMood !== "critico") {
+    state.life.criticalRecoveries = (Number(state.life.criticalRecoveries) || 0) + 1;
+    addJournalEntry("El reporterito salió del modo crítico gracias al cuidado recibido.", "RECUPERACIÓN", "🛟");
+    unlock("savedReporter");
+  }
   if (forceMessage || newMood !== currentMood) setMessage(randomFrom(moodMessages[newMood]));
   currentMood = newMood;
   const viewMood = visualMood(newMood);
@@ -1043,9 +2147,11 @@ function render(forceMessage = false) {
   $("#rewardButton").classList.toggle("hidden", !(state.stats.affection > 90 && state.stats.trust > 80 && !state.rewardOpened));
   updateRoomState(newMood);
   renderPanchito();
+  renderDirectiva();
+  renderReporterLife();
   renderWeather(viewMood);
   renderAchievements();
-  checkAchievements();
+  if (!dead) { checkAchievements(); checkLifeAchievements(); }
   saveState();
 }
 
@@ -1073,17 +2179,19 @@ function applyCareStats(changes) {
 }
 
 const actionMap = {
-  hug: () => { applyCareStats({ hugs: 5, energy: 2 }); state.counts.hugs++; addTreeXP(1); unlock("firstHug"); if (state.counts.hugs >= 10) unlock("spoiled"); react("El reporterito recibió un abrazo pequeño pero poderoso.", "🫂"); },
+  hug: () => { applyCareStats({ hugs: 5, energy: 2 }); applyLifeEffects({happiness:2,love:1}); state.life.lastImportant.hug=Date.now(); state.counts.hugs++; addTreeXP(1); rememberFirst("firstHug", "El reporterito recordó el primer abrazo que recibió en su mundo."); unlock("firstHug"); if (state.counts.hugs >= 10) unlock("spoiled"); if (state.counts.hugs >= 100) unlock("hundredHugs"); react("El reporterito recibió un abrazo pequeño pero poderoso.", "🫂"); },
   message: () => { applyCareStats({ messages: 4, affection: 1 }); addTreeXP(1); openChat(); },
-  love: () => { applyCareStats({ affection: 6, trust: 2 }); addTreeXP(2); unlock("teAmo"); react("El reporterito se puso rojo y guardó cada palabra.", "💘"); },
+  love: () => { applyCareStats({ affection: 6, trust: 2 }); applyLifeEffects({happiness:2}); addTreeXP(2); rememberFirst("firstLove", "El reporterito todavía recuerda el primer ‘te amo’ de la Directiva."); unlock("teAmo"); react("El reporterito se puso rojo y guardó cada palabra.", "💘"); },
   piojito: () => { applyCareStats({ affection: 4, hugs: 3, trust: 3 }); state.counts.piojitos++; addTreeXP(1); react("El reporterito recibió piojito y respiró más tranquilo.", "✨"); },
-  visit: () => { applyCareStats({ hugs: 10, affection: 8, messages: 6, energy: 8, trust: 6 }); addTreeXP(3); unlock("present"); react("¡LA DIRECTIVA ESTÁ AQUÍ! El reporterito recuperó estabilidad.", "🚪", 18); },
-  burger: () => { applyCareStats({ energy: 7, affection: 1 }); addTreeXP(1); unlock("burger"); react("El reporterito recibió hamburguesa y recuperó energía.", "🍔"); },
+  visit: () => { applyCareStats({ hugs: 10, affection: 8, attention: 6, messages: 6, energy: 8, trust: 6 }); applyLifeEffects({happiness:4,motivation:2,fun:2}); state.life.lastImportant.visit=Date.now(); addTreeXP(3); summonDirectiva("visit", true); addJournalEntry("El reporterito recibió una visita y el cuarto se sintió menos vacío.", "VISITA DE LA DIRECTIVA", "🚪"); addTimeline("🚪","La Directiva visitó al reporterito y cambió el tono de todo el día.","VISITA"); unlock("present"); react("¡LA DIRECTIVA ESTÁ AQUÍ! El reporterito recuperó estabilidad.", "🚪", 18); },
+  burger: () => { applyCareStats({ energy: 7, affection: 1 }); applyLifeEffects({hunger:10,happiness:2}); state.life.lastImportant.burger=Date.now(); addTreeXP(1); rememberFirst("firstBurger", "El reporterito recordó la primera hamburguesa salvadora."); unlock("burger"); react("El reporterito recibió hamburguesa y recuperó energía.", "🍔"); },
   reward: openReward
 };
 
 function handleAction(action) {
   if (!actionMap[action]) return;
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (state.life.isDead) { setMessage("El reporterito necesita comenzar una nueva vida antes de recibir cuidados."); return; }
   const remaining = (actionCooldowns[action] || 0) - Date.now();
   if (remaining > 0) {
     setMessage("El reporterito intenta procesar tanto amor, pero su corazoncito pixelado necesita un respiro.");
@@ -1097,10 +2205,13 @@ function handleAction(action) {
 }
 
 function updateCooldownButtons() {
+  const sleeping = isReporterSleepingNow();
   document.querySelectorAll("[data-action]").forEach(button => {
     const remaining = (actionCooldowns[button.dataset.action] || 0) - Date.now();
-    button.classList.toggle("cooling", remaining > 0);
-    if (remaining > 0) button.dataset.cooldown = `${Math.ceil(remaining / 1000)}s`;
+    button.disabled = sleeping;
+    button.classList.toggle("cooling", remaining > 0 || sleeping);
+    if (sleeping) button.dataset.cooldown = "Zzz";
+    else if (remaining > 0) button.dataset.cooldown = `${Math.ceil(remaining / 1000)}s`;
     else delete button.dataset.cooldown;
   });
 }
@@ -1140,6 +2251,7 @@ function unlock(key) {
   if (state.achievements.includes(key)) return;
   state.achievements.push(key);
   const info = achievementInfo[key];
+  rememberFirst("firstAchievement", `El reporterito recordó su primer logro: ${info[1]}.`);
   addAlbumMemory(`Logro desbloqueado: ${info[1]}. ${info[2]}.`, "LOGRO", info[0], `achievement-${key}`);
   toast(info[0], "LOGRO DESBLOQUEADO", info[1]);
   addTreeXP(15);
@@ -1159,6 +2271,9 @@ function checkAchievements() {
     if (!state.highLoveSince) state.highLoveSince = Date.now();
     if (Date.now() - state.highLoveSince > 4 * 60 * 1000) unlock("speedrun");
   } else state.highLoveSince = null;
+  if (state.counts.hugs >= 100) unlock("hundredHugs");
+  if (state.stats.affection >= 98 && state.simulation.happiness >= 90) unlock("infiniteLove");
+  if ((state.eventEngine.traits.support || 0) >= 20 && state.life.visitDates.length >= 7) unlock("bestDirector");
 }
 
 function toast(icon, title, text) {
@@ -1181,7 +2296,7 @@ const events = [
 ];
 
 function showRandomEvent() {
-  if (currentEvent || document.visibilityState === "hidden" || !$("#chatModal").classList.contains("hidden")) return;
+  if (state.life.isDead || currentEvent || document.visibilityState === "hidden" || anyModalOpen()) return;
   currentEvent = randomFrom(events);
   $("#eventIcon").textContent = currentEvent.icon;
   $("#eventTitle").textContent = currentEvent.title;
@@ -1221,6 +2336,8 @@ function openModal(id) { $("#" + id).classList.remove("hidden"); }
 function closeModal(id) { $("#" + id).classList.add("hidden"); }
 
 function tapPet() {
+  if (isReporterSleepingNow()) { sleepBlockedMessage(); return; }
+  if (state.life.isDead) return;
   state.petTaps++;
   react(randomFrom(["El reporterito recibió una caricia digital.", "Je. La directiva lo tocó.", "El reporterito intenta mantener la compostura."]), "♥", 3);
   if (state.petTaps >= 7 && state.stats.affection > 70) {
@@ -1235,23 +2352,32 @@ function updateClock() {
   $("#clock").textContent = now.toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
   $("#dayCounter").textContent = `DÍA ${Math.max(1, Math.floor((Date.now() - state.startedAt) / 86400000) + 1)}`;
   updateWorldTime(true);
+  updateCooldownButtons();
+  renderCurrentActivity();
 }
 
 function decay() {
-  const hour = new Date().getHours();
-  const nighttime = hour >= 22 || hour < 6;
-  const baseLoss = nighttime
-    ? { hugs: 1, affection: 1, messages: 1, energy: 1, trust: 1 }
-    : { hugs: 3, affection: 2, messages: 3, energy: 3, trust: 2 };
-  const criticalMultiplier = isCritical() ? 1.25 : 1;
-  Object.entries(baseLoss).forEach(([key, loss]) => {
-    state.stats[key] = Math.max(0, state.stats[key] - loss * criticalMultiplier);
+  if (state.life.isDead) { renderLifeCounter(); return; }
+  const sleeping = isReporterSleepingNow();
+  const lossPerTick = sleeping ? 6 / (3600000 / 5000) : 5 / ((20 * 60 * 1000) / 5000);
+  const criticalMultiplier = isCritical() ? 1.08 : 1;
+  Object.keys(state.stats).forEach(key => {
+    state.stats[key] = Math.max(0, state.stats[key] - lossPerTick * criticalMultiplier);
+  });
+  ["hunger", "happiness", "motivation", "fun", "prestige"].forEach(key => {
+    state.simulation[key] = Math.max(0, state.simulation[key] - lossPerTick * criticalMultiplier);
+  });
+  ["hunger", "energy", "happiness", "friendship"].forEach(key => {
+    state.panchito[key] = Math.max(0, state.panchito[key] - lossPerTick * criticalMultiplier);
   });
   decayCycles++;
-  if (decayCycles % 3 === 0) {
-    const randomStat = randomFrom(Object.keys(state.stats));
-    state.stats[randomStat] = Math.max(0, state.stats[randomStat] - 4 * criticalMultiplier);
+  if (sleeping) {
+    showLifeEventAlert(false);
+    if (decayCycles % 12 === 0) setMessage("El reporterito está durmiendo. Zzz... De 12:00 a.m. a 8:00 a.m. no puede hacer acciones ni abrir escenas.");
+  } else {
+    checkLifeEventSchedule();
   }
+  state.panchito.mischief = clamp(state.panchito.mischief + (state.panchito.hunger < 30 ? .005 : -.001));
   render();
 }
 
@@ -1261,7 +2387,7 @@ document.addEventListener("click", event => {
   const choiceButton = event.target.closest("[data-choice]");
   if (choiceButton) resolveEvent(Number(choiceButton.dataset.choice));
   const closeButton = event.target.closest("[data-close]");
-  if (closeButton) closeModal(closeButton.dataset.close);
+  if (closeButton) { closeModal(closeButton.dataset.close); if (closeButton.dataset.close === "lifeEventModal" && state.eventEngine.pending) showLifeEventAlert(true); }
   const categoryButton = event.target.closest("[data-chat-category]");
   if (categoryButton && !chatBusy) { activeChatCategory = categoryButton.dataset.chatCategory; renderChatOptions(); }
   const chatMessageButton = event.target.closest("[data-chat-message]");
@@ -1284,555 +2410,64 @@ document.addEventListener("click", event => {
   if (novelChoice) chooseNovelOption(Number(novelChoice.dataset.novelChoice));
   const roomTheme = event.target.closest("[data-room-theme]");
   if (roomTheme) applyRoomTheme(roomTheme.dataset.roomTheme);
+  const outfitButton = event.target.closest("[data-outfit]");
+  if (outfitButton) buyOrEquipOutfit(outfitButton.dataset.outfit);
+  const worldSceneChoice = event.target.closest("[data-world-scene-choice]");
+  if (worldSceneChoice) resolveWorldScene(Number(worldSceneChoice.dataset.worldSceneChoice));
+  const lifeEventOption = event.target.closest("[data-life-event-option]");
+  if (lifeEventOption) resolveLifeEvent(Number(lifeEventOption.dataset.lifeEventOption));
+  const storeItem = event.target.closest("[data-store-item]");
+  if (storeItem) buyLifeStoreItem(storeItem.dataset.storeItem);
+  const miniGame = event.target.closest("[data-minigame]");
+  if (miniGame) startMiniGame(miniGame.dataset.minigame);
+  const miniGameCell = event.target.closest("[data-minigame-cell]");
+  if (miniGameCell) playMiniGameCell(miniGameCell.dataset.minigameCell,miniGameCell);
+  const directivaAction = event.target.closest("[data-directiva-action]");
+  if (directivaAction) chooseDirectivaInteraction(Number(directivaAction.dataset.directivaAction));
+  if (event.target.closest("[data-directiva-call]")) makeDirectivaCall();
+  if (event.target.closest("[data-directiva-date]")) startDirectivaDate();
 });
 
 $("#pet").addEventListener("click", tapPet);
-$("#sceneAlert")?.addEventListener("click", openPendingEvent);
 $("#helpButton").addEventListener("click", () => openModal("helpModal"));
 $("#anotherMessageButton").addEventListener("click", showChatComposer);
 $("#novelButton").addEventListener("click", () => { closeModal("chatModal"); startNovelScene(); });
 $("#nextNovelButton").addEventListener("click", startNovelScene);
 $("#panchito").addEventListener("click", () => handlePanchitoAction("pet"));
-document.querySelectorAll(".modal-backdrop").forEach(modal => modal.addEventListener("click", event => { if (event.target === modal && modal.id !== "eventModal") closeModal(modal.id); }));
+$("#directivaCharacter")?.addEventListener("click", openDirectivaPanel);
+$("#newThoughtButton").addEventListener("click", () => showRandomThought(true));
+$("#restartLifeButton").addEventListener("click", restartReporterLife);
+$("#lifeEventAlert").addEventListener("click", openPendingLifeEvent);
+$("#resetGameButton").addEventListener("click", () => {
+  if (resetArmed) { resetGame(); return; }
+  resetArmed = true; $("#resetGameButton").classList.add("confirming");
+  $("#resetGameButton").textContent = "Confirmar: borrar todo el mundo";
+  setTimeout(() => { resetArmed = false; $("#resetGameButton").classList.remove("confirming"); $("#resetGameButton").textContent = "Reiniciar mundo (protegido)"; }, 6000);
+});
+document.querySelectorAll(".modal-backdrop").forEach(modal => modal.addEventListener("click", event => { if (event.target === modal && modal.id !== "eventModal") { closeModal(modal.id); if (modal.id === "lifeEventModal" && state.eventEngine.pending) showLifeEventAlert(true); } }));
 document.addEventListener("keydown", event => { if (event.key === "Escape") document.querySelectorAll(".modal-backdrop:not(.hidden)").forEach(modal => { if (modal.id !== "eventModal") closeModal(modal.id); }); });
-window.addEventListener("beforeunload", saveState);
-
-
-
-/* === FINAL DEFINITIVO: dificultad, alertas sobre el reporterito, sueño 00-08 y chat contextual === */
-const DECAY_INTERVAL_MS = 10000;
-let sceneAlertTimer = null;
-let sceneAlertDeadline = 0;
-let pendingFollowUp = null;
-
-const SLEEP_START = 0;
-const SLEEP_END = 8;
-const isSleepTime = () => {
-  const hour = new Date().getHours();
-  return hour >= SLEEP_START && hour < SLEEP_END;
-};
-
-function getTimePeriod(hour = new Date().getHours()) {
-  if (hour >= 8 && hour < 12) return "morning";
-  if (hour >= 12 && hour < 19) return "afternoon";
-  if (hour >= 19 && hour < 24) return "night";
-  return "late";
-}
-
-function updateSleepLock() {
-  const locked = isSleepTime();
-  document.body.classList.toggle("sleep-lock", locked);
-  document.querySelectorAll("[data-action], [data-panchito-action], .chat-option, #novelButton, #anotherMessageButton, .special-replies button").forEach(button => {
-    button.disabled = locked;
-    button.setAttribute("aria-disabled", locked ? "true" : "false");
-  });
-  if (locked) {
-    currentEvent = null;
-    clearTimeout(sceneAlertTimer);
-    $("#sceneAlert")?.classList.add("hidden");
-    closeModal("eventModal");
-  }
-  let banner = $("#sleepBanner");
-  if (locked && !banner) {
-    banner = document.createElement("div");
-    banner.id = "sleepBanner";
-    banner.className = "sleep-banner";
-    banner.textContent = "🌙 00:00–08:00 · El reporterito y Panchito están dormidos. Las acciones se desbloquean al despertar.";
-    $("#roomScene").appendChild(banner);
-  }
-  if (!locked && banner) banner.remove();
-}
-
-function sleepMessageForNow() {
-  const hour = new Date().getHours();
-  if (hour >= 0 && hour < 8) return "Buenas noches, Directiva. El reporterito está dormido soñando con usted y Panchito duerme junto a la cama.";
-  if (hour >= 8 && hour < 10) return "Buenos días, Directiva. El reporterito acaba de despertar y Panchito ya está moviendo la colita.";
-  return TIME_PERIOD_INFO[getTimePeriod()][2];
-}
-
-function determineMood() {
-  const s = state.stats;
-  const redBars = Object.values(s).filter(value => value < 25).length;
-  if (isSleepTime()) return "dormido";
-  if (isCritical()) return "critico";
-  if (Date.now() < state.daringUntil) return "atrevido";
-  if (s.affection >= 100) return "enfermo";
-  if (redBars >= 3) return "muy-triste";
-  if (s.hugs < 25) return "abrazos";
-  if (s.messages < 25) return "esperando";
-  if (Object.values(s).every(value => value > 80)) return "enamorado";
-  const avg = average();
-  if (avg >= 60) return "feliz";
-  if (avg >= 40) return "tranquilo";
-  return "triste";
-}
-
-function updateWorldTime(announce = true) {
-  const previous = state.world.timePeriod;
-  const period = getTimePeriod();
-  state.world.timePeriod = period;
-  $("#roomScene").dataset.time = period;
-  $("#roomPeriodIcon").textContent = TIME_PERIOD_INFO[period][0];
-  $("#roomPeriodName").textContent = TIME_PERIOD_INFO[period][1];
-  updateSleepLock();
-  if (announce && previous !== period) {
-    const msg = sleepMessageForNow();
-    setMessage(msg);
-    toast(TIME_PERIOD_INFO[period][0], TIME_PERIOD_INFO[period][1], msg);
-    addAlbumMemory(msg, period === "late" ? "BUENAS NOCHES" : "BUENOS DÍAS", period === "late" ? "🌙" : "☀");
-    saveState();
-  }
-}
-
-function updateFaceClasses(mood) {
-  const pet = $("#pet");
-  ["feliz", "enamorado", "triste", "muy-triste", "dormido", "atrevido", "critico"].forEach(name => pet.classList.remove(`mood-${name}`));
-  const face = mood === "enfermo" ? "enamorado" : mood === "abrazos" || mood === "esperando" ? "triste" : mood;
-  if (["feliz", "enamorado", "triste", "muy-triste", "dormido", "atrevido", "critico"].includes(face)) pet.classList.add(`mood-${face}`);
-}
-
-function render(forceMessage = false) {
-  Object.entries(state.stats).forEach(([key, value]) => {
-    const element = document.querySelector(`[data-stat="${key}"]`);
-    element.querySelector("b").textContent = `${clamp(value)}%`;
-    element.querySelector(".stat-fill").style.width = `${clamp(value)}%`;
-    element.classList.toggle("low", value < 30);
-    element.classList.toggle("medium", value >= 30 && value < 55);
-  });
-  const newMood = determineMood();
-  if (forceMessage || newMood !== currentMood) setMessage(isSleepTime() ? sleepMessageForNow() : randomFrom(moodMessages[newMood]));
-  currentMood = newMood;
-  const viewMood = visualMood(newMood);
-  document.body.dataset.mood = viewMood;
-  $("#screen").dataset.mood = viewMood;
-  $("#statusChip").textContent = moodLabel(newMood);
-  $("#loveLevel").textContent = Math.round(average());
-  $("#pet").classList.toggle("sad", ["triste", "muy-triste", "abrazos", "esperando", "critico"].includes(newMood));
-  $("#pet").classList.toggle("sleepy", newMood === "dormido");
-  updateFaceClasses(newMood);
-  $("#rewardButton").classList.toggle("hidden", !(state.stats.affection > 90 && state.stats.trust > 80 && !state.rewardOpened));
-  updateRoomState(newMood);
-  renderPanchito();
-  renderWeather(viewMood);
-  renderAchievements();
-  checkAchievements();
-  updateSleepLock();
-  saveState();
-}
-
-function handleAction(action) {
-  if (isSleepTime()) {
-    setMessage("Shhh... el reporterito está dormido. Puede recibir amor otra vez a partir de las 8:00 AM.");
-    return;
-  }
-  if (!actionMap[action]) return;
-  const remaining = (actionCooldowns[action] || 0) - Date.now();
-  if (remaining > 0) {
-    setMessage("El reporterito intenta procesar tanto amor, pero su corazoncito pixelado necesita un respiro.");
-    toast("⏳", "CORAZONCITO EN PAUSA", `${Math.ceil(remaining / 1000)} segundos para volver a intentarlo.`);
-    return;
-  }
-  actionMap[action]();
-  actionCooldowns[action] = Date.now() + 7000;
-  updateCooldownButtons();
-  render();
-}
-
-function handlePanchitoAction(action) {
-  if (isSleepTime()) {
-    setMessage("Panchito también está dormido. Se desbloquea otra vez a las 8:00 AM.");
-    return;
-  }
-  const remaining = (panchitoCooldowns[action] || 0) - Date.now();
-  if (remaining > 0) {
-    setMessage("Panchito sigue procesando tanto cariño y mueve la colita pacientemente.");
-    return;
-  }
-  const actions = {
-    pet: { changes: { trust: 2, energy: 1 }, message: "El reporterito acarició a Panchito y se sintió un poquito mejor.", counter: "pets", visual: "happy" },
-    feed: { changes: { energy: 2 }, message: "Panchito comió feliz y el reporterito sonrió.", counter: "feeds", visual: "happy" },
-    play: { changes: { affection: 2, energy: 2 }, message: "El reporterito jugó con Panchito y recuperó alegría.", counter: "plays", visual: "playing" }
-  };
-  const data = actions[action];
-  if (!data) return;
-  changeStats(data.changes); addTreeXP(1);
-  state.panchito[data.counter] = (Number(state.panchito[data.counter]) || 0) + 1;
-  panchitoCooldowns[action] = Date.now() + 7000;
-  setPanchitoVisual(data.visual); renderPanchito();
-  setMessage(data.message); burstHearts(5, action === "feed" ? "🍖" : action === "play" ? "🎾" : "♥");
-  setTimeout(() => { setPanchitoVisual("happy"); saveState(); }, 1800);
-  checkWorldAchievements(); render(); saveState();
-}
-
-function showRandomEvent() {
-  if (isSleepTime() || currentEvent || document.visibilityState === "hidden" || !$("#chatModal").classList.contains("hidden")) return;
-  currentEvent = randomFrom(events);
-  sceneAlertDeadline = Date.now() + 30000;
-  const alert = $("#sceneAlert");
-  if (!alert) return;
-  alert.classList.remove("hidden");
-  alert.textContent = "❗";
-  alert.title = "Toca para ver qué le pasa al reporterito";
-  setMessage("El reporterito tiene algo pasando. Toca el signo ❗ sobre su cabeza para decidir qué hacer.");
-  clearTimeout(sceneAlertTimer);
-  sceneAlertTimer = setTimeout(autoResolvePendingEvent, 30000);
-}
-
-function openPendingEvent() {
-  if (!currentEvent) return;
-  clearTimeout(sceneAlertTimer);
-  $("#sceneAlert")?.classList.add("hidden");
-  $("#eventIcon").textContent = currentEvent.icon;
-  $("#eventTitle").textContent = currentEvent.title;
-  $("#eventText").textContent = currentEvent.text;
-  $("#eventActions").innerHTML = currentEvent.choices.map((choice, index) => `<button data-choice="${index}" class="${choice.danger ? "danger" : ""}">${choice.label}</button>`).join("");
-  openModal("eventModal");
-}
-
-function autoResolvePendingEvent() {
-  if (!currentEvent) return;
-  const badChoiceIndex = currentEvent.choices.findIndex(choice => choice.danger);
-  $("#sceneAlert")?.classList.add("hidden");
-  const title = currentEvent.title;
-  currentEvent = null;
-  changeStats({ affection: -6, messages: -5, trust: -4, energy: -4 });
-  addAlbumMemory(`La Directiva no alcanzó a responder la escena: ${title}.`, "ESCENA PERDIDA", "❗");
-  setMessage("El reporterito esperó una respuesta, se puso dramático y perdió un poquito de estabilidad emocional.");
-  toast("❗", "ESCENA PERDIDA", "El reporterito decidió solito y no le salió muy bien.");
-  render();
-}
-
-function resolveEvent(index) {
-  if (!currentEvent) return;
-  clearTimeout(sceneAlertTimer);
-  $("#sceneAlert")?.classList.add("hidden");
-  const choice = currentEvent.choices[index];
-  closeModal("eventModal");
-  currentEvent = null;
-  choice.result();
-  if (!choice.danger) {
-    addTreeXP(choice.treeXP || 0);
-    addAlbumMemory("La Directiva tomó una decisión y el reporterito sintió que sus acciones importan.", "DECISIÓN DE LA DIRECTIVA", "❗");
-    if (Math.random() < .18) grantNextGift("EVENTO ALEATORIO");
-  }
-  render();
-}
-
-function decay() {
-  const sleepLossPerTick = 6 / (3600000 / DECAY_INTERVAL_MS);
-  const baseLoss = isSleepTime()
-    ? { hugs: sleepLossPerTick, affection: sleepLossPerTick, messages: sleepLossPerTick, energy: sleepLossPerTick, trust: sleepLossPerTick, attention: sleepLossPerTick }
-    : { hugs: 0.24, affection: 0.18, messages: 0.30, energy: 0.20, trust: 0.14, attention: 0.24 };
-  const criticalMultiplier = isCritical() ? 1.08 : 1;
-  Object.entries(baseLoss).forEach(([key, loss]) => {
-    state.stats[key] = Math.max(0, state.stats[key] - loss * criticalMultiplier);
-  });
-  decayCycles++;
-  if (!isSleepTime() && decayCycles % 6 === 0) {
-    const randomStat = randomFrom(Object.keys(state.stats));
-    state.stats[randomStat] = Math.max(0, state.stats[randomStat] - 0.6 * criticalMultiplier);
-  }
-  render();
-}
-
-const CONTEXT_RESPONSES = {
-  "¿Ya comiste?": [
-    "Todavía no, pero prometo comer algo después de este reporte emocional.",
-    "Sí, la Directiva puede estar tranquila.",
-    "Panchito me está juzgando porque todavía no como.",
-    "Estoy considerando seriamente una hamburguesa.",
-    "Comí poquito, pero acepto supervisión alimenticia.",
-    "Voy a comer, lo prometo por Panchito.",
-    "No mucho, pero tu mensaje ya me dio energía.",
-    "Ya casi, la Directiva no tiene que preocuparse."
-  ],
-  "¿Ya tomaste agua?": ["Ya tomé, reporte hidratado entregado.", "Voy por agua ahorita porque la Directiva lo ordenó.", "Panchito me está acompañando al vaso de agua.", "Casi se me olvida, gracias por cuidarme."],
-  "¿Cómo te sientes hoy?": ["Te extraño, pero estoy mejor porque apareciste.", "Un poquito cansado, pero con ganas de hablar contigo.", "Sensible, enamorado y necesitando piojito.", "Bien, aunque pensando en ti cada cinco minutos."],
-  "¿Dormiste bien?": ["Dormí pensando en ti y eso cuenta como descanso emocional.", "Más o menos, soñé cosas bonitas pero desperté extrañándote.", "Sí, Panchito cuidó la guardia nocturna.", "No tanto, necesito una siesta y un abrazo."],
-  "¿Necesitas un abrazo?": ["Sí, de esos que reinician el sistema.", "Necesito uno larguito y sin prisa.", "El reporterito solicita abrazo urgente.", "Sí, pero si trae piojito, mejor."],
-  "¿Cómo estuvo tu día?": ["Pesadito, pero quería contártelo.", "Bonito porque pensé en ti mucho.", "Productivo por tres minutos y luego te extrañé.", "Mejoró cuando llegaste al chat."],
-  "Te amo muchísimo.": ["Yo también te amo muchísimo, Directiva.", "El reporterito se quedó sin palabras y con ojos de corazón.", "Sistema emocional: amor recibido en cantidad peligrosa.", "Yo más, aunque el sistema diga que no compita."],
-  "Te extraño.": ["Yo también te extraño, más de lo recomendado.", "El modo extrañar ya estaba activado desde antes.", "Estoy contando los días para verte.", "Extrañarte ya es parte de mi horario."],
-  "Estoy orgullosa de ti.": ["Eso me dio fuerza para todo el día.", "El reporterito guardó ese mensaje para sus días difíciles.", "Me hiciste sentir suficiente.", "Panchito también se emocionó al leer eso."],
-  "Buenas noches, reporterito.": ["Buenas noches, Directiva. Voy a soñar bonito con usted.", "El reporterito se duerme abrazando recuerdos bonitos.", "Panchito ya se acomodó y yo también.", "Modo sueño activado: pensando en la Directiva."]
-};
-
-const CHAT_FOLLOWUPS = {
-  "¿Ya comiste?": [
-    ["🍔 Te mando hamburguesa", "El reporterito aceptó oficialmente la hamburguesa emocional.", { energy: 3, affection: 1 }, "specialBurger"],
-    ["😠 Ve a comer ahora", "El reporterito obedeció con miedo respetuoso a la Directiva.", { trust: 1, energy: 2 }],
-    ["❤️ Cuídate mucho", "El reporterito se sintió cuidado y prometió comer bien.", { affection: 1, trust: 1 }],
-    ["😂 Te estoy vigilando", "El reporterito activó modo supervisión alimenticia.", { messages: 1, energy: 1 }]
-  ],
-  "¿Cómo te sientes hoy?": [
-    ["❤️ Dar abrazo", "El reporterito recibió un abrazo y se sintió menos cansado.", { hugs: 3, affection: 1 }],
-    ["👂 Escuchar", "El reporterito agradeció sentirse escuchado.", { trust: 2 }],
-    ["☕ Dar descanso", "El reporterito bajó los hombritos y respiró.", { energy: 2 }],
-    ["🐶 Mandar a Panchito", "Panchito se sentó junto al reporterito como apoyo oficial.", { energy: 1, trust: 1 }]
-  ],
-  "Te extraño.": [
-    ["❤️ Abrazo virtual", "El reporterito abrazó el celular como medida emocional de emergencia.", { hugs: 2, affection: 1 }],
-    ["💌 Carta", "El reporterito guardó la carta para leerla cuando extrañe mucho.", { trust: 2 }, "letter"],
-    ["📞 Llamarlo", "El reporterito escuchó su voz imaginaria y sonrió.", { messages: 2, affection: 1 }],
-    ["📸 Mandar foto", "El reporterito se quedó viendo la foto con cara de enamorado.", { affection: 2 }, "photo"]
-  ],
-  "Buenas noches, reporterito.": [
-    ["🌙 Taparlo", "El reporterito se sintió cuidado antes de dormir.", { trust: 1, energy: 1 }],
-    ["💌 Dejar carta", "El reporterito encontrará la carta al despertar.", { affection: 1 }, "letter"],
-    ["⭐ Mirar estrellas", "Panchito y el reporterito durmieron bajo una noche bonita.", { energy: 1 }]
-  ]
-};
-
-function pickChatResponse(text) {
-  if (CONTEXT_RESPONSES[text]) return randomFrom(CONTEXT_RESPONSES[text]);
-  const allMessages = Object.values(CHAT_CATEGORIES).flat();
-  const pairedResponse = REPORTER_RESPONSES[allMessages.indexOf(text)];
-  const wasRecentlyUsed = state.chat.recent.some(item => item.response === pairedResponse);
-  if (pairedResponse && !wasRecentlyUsed) return pairedResponse;
-  const recentResponses = state.chat.recent.map(item => item.response);
-  const freshAlternatives = REPORTER_RESPONSES.slice(70).filter(response => !recentResponses.includes(response));
-  return randomFrom(freshAlternatives.length ? freshAlternatives : REPORTER_RESPONSES.slice(70));
-}
-
-function maybeShowFollowUp(text) {
-  const explicit = CHAT_FOLLOWUPS[text];
-  if (!explicit && Math.random() > .45) return false;
-  const options = explicit || [
-    ["❤️ Seguirle la plática", "El reporterito sintió que la Directiva no solo escribió, también se quedó.", { messages: 1, affection: 1 }],
-    ["👂 Escucharlo", "El reporterito se sintió acompañado de verdad.", { trust: 1 }],
-    ["🫂 Mandar cariño extra", "El reporterito recibió cariño preventivo.", { hugs: 1, affection: 1 }]
-  ];
-  pendingFollowUp = { options };
-  $("#specialReplyOptions").innerHTML = options.map((option, index) => `<button data-special-reply="${index}">${option[0]}</button>`).join("");
-  $("#specialReplies").classList.remove("hidden");
-  scrollChat();
-  return true;
-}
-
-function sendChatMessage(index) {
-  if (isSleepTime()) { setMessage("El chat está en modo sueño. El reporterito leerá mensajes a partir de las 8:00 AM."); return; }
-  if (chatBusy) return;
-  const text = CHAT_CATEGORIES[activeChatCategory][index];
-  if (!text) return;
-  const response = pickChatResponse(text);
-  chatBusy = true;
-  $("#chatComposer").classList.add("hidden");
-  $("#anotherMessageButton").classList.add("hidden");
-  appendChatBubble("directiva", text);
-  state.chat.totalSent++; state.counts.messages++;
-  state.chat.recent.push({ text, response }); state.chat.recent = state.chat.recent.slice(-10);
-  const bonuses = { messages: 2, affection: 1 };
-  if (activeChatCategory === "Ternuritas") { delete bonuses.affection; bonuses.energy = 1; }
-  if (activeChatCategory === "Directiva oficial") { delete bonuses.affection; bonuses.trust = 1; }
-  changeStats(bonuses); addTreeXP(1); updateChatCounter(); checkChatAchievements(); render(); saveState(); showTyping();
-  setTimeout(() => {
-    $("#typingIndicator")?.remove();
-    appendChatBubble("reporterito", response);
-    setMessage(response); burstHearts(4, "💬");
-    if (maybeShowFollowUp(text)) { chatBusy = false; return; }
-    if (Math.random() < .10) beginSpecialConversation();
-    else finishChatTurn();
-  }, 1000);
-}
-
-function answerSpecialConversation(index) {
-  if (pendingFollowUp) {
-    const option = pendingFollowUp.options[index];
-    if (!option || chatBusy) return;
-    chatBusy = true;
-    appendChatBubble("directiva", option[0]);
-    changeStats({ messages: 1, ...option[2] });
-    if (option[3]) grantGift(option[3], "CHAT CON CONTINUACIÓN");
-    addTreeXP(1);
-    $("#specialReplies").classList.add("hidden");
-    showTyping();
-    setTimeout(() => {
-      $("#typingIndicator")?.remove();
-      appendChatBubble("reporterito", option[1]);
-      setMessage(option[1]);
-      state.chat.recent.push({ text: option[0], response: option[1] });
-      state.chat.recent = state.chat.recent.slice(-10);
-      pendingFollowUp = null;
-      finishChatTurn();
-      render(); saveState();
-    }, 850);
-    return;
-  }
-  if (!pendingSpecial || chatBusy) return;
-  const option = pendingSpecial.options[index];
-  if (!option) return;
-  chatBusy = true;
-  appendChatBubble("directiva", option[0]);
-  state.chat.totalSent++; state.counts.messages++;
-  state.chat.recent.push({ text: option[0], response: "Sistema emocional actualizado: el reporterito guardó esta conversación como recuerdo favorito." });
-  state.chat.recent = state.chat.recent.slice(-10);
-  changeStats({ messages: 2, ...option[1] });
-  addTreeXP(1);
-  if (!state.chat.unlockedSpecials.includes(pendingSpecial.id)) {
-    state.chat.unlockedSpecials.push(pendingSpecial.id);
-    addAlbumMemory("El reporterito desbloqueó una conversación especial y la guardó para siempre.", "CONVERSACIÓN ESPECIAL", "💞", `special-${pendingSpecial.id}`);
-    grantNextGift("CONVERSACIÓN ESPECIAL");
-  }
-  $("#specialReplies").classList.add("hidden");
-  showTyping(); updateChatCounter(); checkChatAchievements(); render(); saveState();
-  setTimeout(() => {
-    $("#typingIndicator")?.remove();
-    appendChatBubble("reporterito", "Sistema emocional actualizado: el reporterito guardó esta conversación como recuerdo favorito.");
-    pendingSpecial = null; finishChatTurn();
-  }, 1000);
-}
-
-function showChatComposer() {
-  pendingSpecial = null; pendingFollowUp = null; chatBusy = false;
-  $("#specialReplies").classList.add("hidden");
-  $("#anotherMessageButton").classList.add("hidden");
-  $("#chatComposer").classList.remove("hidden");
-  renderChatOptions(); updateSleepLock();
-}
-
-// Barra extra obligatoria de cuidado: Atención.
-STAT_INFO.attention = { label: "Atención", icon: "👀" };
-if (state.stats.attention === undefined) state.stats.attention = 65;
-actionMap.message = () => { applyCareStats({ messages: 4, attention: 2, affection: 1 }); addTreeXP(1); openChat(); };
-actionMap.visit = () => { applyCareStats({ hugs: 8, affection: 7, messages: 5, energy: 6, trust: 5, attention: 8 }); addTreeXP(3); unlock("present"); react("¡LA DIRECTIVA ESTÁ AQUÍ! El reporterito recuperó estabilidad.", "🚪", 18); };
-actionMap.hug = () => { applyCareStats({ hugs: 5, affection: 2, attention: 1 }); state.counts.hugs++; addTreeXP(1); unlock("firstHug"); if (state.counts.hugs >= 10) unlock("spoiled"); react("El reporterito recibió un abrazo pequeño pero poderoso.", "🫂"); };
-actionMap.piojito = () => { applyCareStats({ affection: 4, hugs: 3, trust: 2, attention: 1 }); state.counts.piojitos++; addTreeXP(1); react("El reporterito recibió piojito y respiró más tranquilo.", "✨"); };
+window.addEventListener("beforeunload", () => { if (!hardResetInProgress) saveState(); });
 
 buildInterface(); updateClock();
 setInterval(updateClock, 30000);
-setInterval(decay, DECAY_INTERVAL_MS);
+setInterval(decay, 5000);
 setInterval(updateCooldownButtons, 250);
 setInterval(showTreeAmbientMessage, 28000);
 setInterval(cyclePanchitoBehavior, 12000);
 setTimeout(showPanchitoEvent, 45000);
 setInterval(showPanchitoEvent, 90000);
+setTimeout(showContextualWorldScene, 18000);
+setInterval(showContextualWorldScene, 80000);
+setTimeout(maybeShowSpontaneousLetter, 120000);
+setInterval(maybeShowSpontaneousLetter, 180000);
 setInterval(() => {
   if (!currentEvent) {
     setMessage(randomFrom(ambientMessages)); state.counts.thoughts++; checkAchievements(); saveState();
   }
 }, 24000);
-// Las escenas NO se abren solas: cada 5 minutos aparece un ❗ sobre el reporterito.
-// La Directiva debe tocarlo para abrir la escena y decidir qué hacer.
-setTimeout(showRandomEvent, 300000);
-setInterval(showRandomEvent, 300000);
+setInterval(checkLifeEventSchedule, 10000);
+setInterval(() => runAutonomousLife(false), 30000);
+setInterval(renderCurrentActivity, 1000);
 
-
-/* Diario del Reporterito: registra acciones, decisiones y pensamientos sin cambiar la mecánica principal. */
-const DIARY_THOUGHTS = [
-  "El reporterito pensó que la Directiva tiene una forma muy bonita de cuidarlo.",
-  "El reporterito guardó mentalmente cada abrazo como si fuera una estampita importante.",
-  "Panchito se quedó mirando al reporterito como diciendo: ‘sí la queremos mucho’. ",
-  "El reporterito recordó que no necesita estar perfecto para ser querido.",
-  "El reporterito anotó que hoy también sobrevivió gracias a la Directiva.",
-  "El reporterito pensó en mandar un mensaje larguísimo, pero decidió respirar primero.",
-  "Panchito movió la colita cuando vio que la Directiva volvió al juego.",
-  "El reporterito se preguntó si la Directiva ya comió y luego se sintió cuidado también.",
-  "El reporterito volvió a mirar la foto y sonrió poquito.",
-  "El reporterito puso en su diario: ‘hoy me cuidaron bonito’. ",
-  "El reporterito cree que la Directiva debería saber que él está orgulloso de ella.",
-  "El reporterito escuchó una canción romántica y fingió que no le pegó.",
-  "El reporterito dejó una nota mental: pedir más piojito cuando sea posible.",
-  "Panchito se acostó cerca del reporterito y el cuarto se sintió menos solito.",
-  "El reporterito pensó que algunas personas son hogar, y luego pensó en la Directiva."
-];
-
-function ensureDiaryState() {
-  if (!state.diary || typeof state.diary !== "object") state.diary = { entries: [], lastThoughtAt: 0 };
-  if (!Array.isArray(state.diary.entries)) state.diary.entries = [];
-  if (!state.diary.lastThoughtAt) state.diary.lastThoughtAt = 0;
-}
-
-function addDiaryEntry(text, type = "DIARIO", icon = "📝") {
-  ensureDiaryState();
-  const last = state.diary.entries[state.diary.entries.length - 1];
-  if (last && last.text === text && Date.now() - last.createdAt < 5000) return;
-  state.diary.entries.push({ text, type, icon, createdAt: Date.now() });
-  state.diary.entries = state.diary.entries.slice(-120);
-  renderDiary();
-  saveState();
-}
-
-function addReporterThought(manual = false) {
-  ensureDiaryState();
-  if (!manual && Date.now() - state.diary.lastThoughtAt < 90000) return;
-  state.diary.lastThoughtAt = Date.now();
-  const thought = randomFrom(DIARY_THOUGHTS);
-  addDiaryEntry(thought, "PENSAMIENTO DEL REPORTERITO", "💭");
-  if (manual) {
-    setMessage(thought);
-    toast("💭", "PENSAMIENTO GUARDADO", "El reporterito escribió algo nuevo en su diario.");
-  }
-}
-
-function renderDiary() {
-  ensureDiaryState();
-  const list = document.getElementById("diaryList");
-  const count = document.getElementById("diaryCount");
-  const highlight = document.getElementById("diaryHighlight");
-  if (!list || !count || !highlight) return;
-  const entries = state.diary.entries.slice().reverse();
-  count.textContent = state.diary.entries.length;
-  highlight.textContent = entries[0]?.text || "El diario está esperando su primer pensamiento bonito.";
-  list.innerHTML = entries.length ? entries.slice(0, 40).map(entry => `
-    <article class="diary-entry" data-icon="${escapeHTML(entry.icon)}">
-      <b>${escapeHTML(entry.type)}</b>
-      <p>${escapeHTML(entry.text)}</p>
-      <time>${new Date(entry.createdAt).toLocaleString("es-MX", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</time>
-    </article>`).join("") : '<p class="diary-empty">Todavía no hay entradas. Cuando la Directiva cuide al reporterito, él lo va a guardar aquí.</p>';
-}
-
-const originalAddAlbumMemoryForDiary = addAlbumMemory;
-addAlbumMemory = function(text, type = "RECUERDO", icon = "♥", id = null) {
-  originalAddAlbumMemoryForDiary(text, type, icon, id);
-  if (!["LOGRO"].includes(type)) addDiaryEntry(text, type, icon);
-};
-
-const originalHandleActionForDiary = handleAction;
-handleAction = function(action) {
-  const labels = { hug: "La Directiva le dio un abrazo al reporterito.", message: "La Directiva abrió el chat para escribirle al reporterito.", love: "La Directiva le dijo te amo al reporterito.", piojito: "La Directiva le dio piojito al reporterito.", visit: "La Directiva visitó al reporterito y el cuarto se sintió vivo.", burger: "La Directiva mandó hamburguesa para salvar la energía emocional.", reward: "La Directiva abrió una recompensa secreta." };
-  originalHandleActionForDiary(action);
-  if (labels[action]) addDiaryEntry(labels[action], "ACCIÓN DE LA DIRECTIVA", "❤️");
-};
-
-const originalResolveEventForDiary = resolveEvent;
-resolveEvent = function(index) {
-  const eventTitle = currentEvent?.title || "Escena";
-  const choiceLabel = currentEvent?.choices?.[index]?.label || "una decisión";
-  originalResolveEventForDiary(index);
-  addDiaryEntry(`En “${eventTitle}”, la Directiva eligió: ${choiceLabel}.`, "DECISIÓN", "❗");
-};
-
-const originalSendChatMessageForDiary = sendChatMessage;
-sendChatMessage = function(index) {
-  const text = CHAT_CATEGORIES[activeChatCategory]?.[index];
-  originalSendChatMessageForDiary(index);
-  if (text) addDiaryEntry(`La Directiva escribió en el chat: “${text}”`, "CHAT", "💬");
-};
-
-const originalAnswerSpecialForDiary = answerSpecialConversation;
-answerSpecialConversation = function(index) {
-  const label = pendingFollowUp?.options?.[index]?.[0] || pendingSpecial?.options?.[index]?.[0];
-  originalAnswerSpecialForDiary(index);
-  if (label) addDiaryEntry(`La Directiva continuó la conversación con: “${label}”`, "CHAT CON CONTINUACIÓN", "💞");
-};
-
-const originalPanchitoActionForDiary = handlePanchitoAction;
-handlePanchitoAction = function(action) {
-  const labels = { pet: "La Directiva acarició a Panchito.", feed: "La Directiva le dio comida a Panchito.", play: "La Directiva jugó con Panchito." };
-  originalPanchitoActionForDiary(action);
-  if (labels[action]) addDiaryEntry(labels[action], "PANCHITO", "🐶");
-};
-
-const originalNovelChoiceForDiary = chooseNovelOption;
-chooseNovelOption = function(index) {
-  const sceneTitle = currentNovel?.title || "Escena romántica";
-  const choiceLabel = currentNovel?.options?.[index]?.[0] || "una respuesta";
-  originalNovelChoiceForDiary(index);
-  addDiaryEntry(`En la escena “${sceneTitle}”, la Directiva eligió: ${choiceLabel}.`, "ESCENA ROMÁNTICA", "▣");
-};
-
-ensureDiaryState();
-renderDiary();
-document.getElementById("diaryThoughtButton")?.addEventListener("click", () => addReporterThought(true));
-setInterval(() => addReporterThought(false), 150000);
-setTimeout(() => addDiaryEntry("El reporterito abrió su diario y revisó que todo siguiera guardado para la Directiva.", "DIARIO", "📝"), 1200);
+setInterval(maybeDirectivaVisit, 30000);
+setInterval(() => { if (!state.life.isDead && getTimePeriod() === "late") handleDreamCycle(); }, 60000);
